@@ -208,16 +208,6 @@
             gap: 13px;
         }
 
-        .invite-notice {
-            font-size: 12px;
-            line-height: 1.45;
-            color: var(--text-secondary);
-            background: rgba(56, 189, 248, 0.1);
-            border: 1px solid rgba(56, 189, 248, 0.25);
-            padding: 10px 12px;
-            border-radius: 12px;
-        }
-
         .input-group {
             display: flex;
             flex-direction: column;
@@ -249,14 +239,6 @@
 
         input:focus, textarea:focus, select:focus {
             border-color: var(--accent);
-        }
-
-        .code-input {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            text-align: center;
-            font-weight: 700;
         }
 
         textarea { resize: vertical; min-height: 76px; }
@@ -531,6 +513,27 @@
             padding-top: 4px;
         }
 
+        .post-action-btn {
+            background: var(--bg-input);
+            border: 1px solid var(--border-glass);
+            color: var(--text-secondary);
+            padding: 6px 11px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .post-action-btn.liked {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .post-action-btn.del {
+            margin-left: auto;
+            color: var(--danger);
+        }
+
         .badge-first {
             display: inline-flex;
             align-items: center;
@@ -763,7 +766,7 @@
 
             <div class="auth-tabs" role="tablist">
                 <button type="button" class="tab-btn active" data-auth-tab="login">Вход</button>
-                <button type="button" class="tab-btn" data-auth-tab="register">По 16-значному коду</button>
+                <button type="button" class="tab-btn" data-auth-tab="register">Регистрация</button>
             </div>
 
             <form id="loginForm" class="auth-form">
@@ -779,21 +782,6 @@
             </form>
 
             <form id="registerForm" class="auth-form hidden">
-                <div class="invite-notice">
-                    Регистрация закрыта: требуется один из 15 одноразовых 16-значных кодов, выведенных в консоль сервера.
-                </div>
-                <div class="input-group">
-                    <label for="regInviteCode">16-значный код доступа</label>
-                    <input
-                        type="text"
-                        id="regInviteCode"
-                        class="code-input"
-                        placeholder="XXXX-XXXX-XXXX-XXXX"
-                        maxlength="19"
-                        required
-                        autocomplete="off"
-                    >
-                </div>
                 <div class="input-group">
                     <label for="regDisplayName">Имя</label>
                     <input type="text" id="regDisplayName" placeholder="Как тебя зовут" required>
@@ -808,9 +796,9 @@
                 </div>
                 <div class="input-group">
                     <label for="regPassword">Пароль</label>
-                    <input type="password" id="regPassword" placeholder="Минимум 6 символов" required autocomplete="new-password">
+                    <input type="password" id="regPassword" placeholder="Минимум 6 символов" minlength="6" required autocomplete="new-password">
                 </div>
-                <button type="submit" class="btn-primary full-width">Активировать код и войти</button>
+                <button type="submit" class="btn-primary full-width">Создать аккаунт и войти</button>
             </form>
         </section>
     </main>
@@ -927,7 +915,6 @@
                                 <div class="profile-city" id="profCity"></div>
                             </div>
                         </div>
-                        <!-- Только бейдж FIRST при наличии, без второго переключателя темы -->
                         <span id="profFirstBadge" class="badge-first hidden" onclick="toast('Официальный аккаунт FIRST • Подтверждено Sfera')">FIRST</span>
                     </div>
 
@@ -1006,7 +993,6 @@
     </div>
 
     <script>
-        // Для GitHub Pages укажи здесь публичный URL твоего FastAPI-сервера (без слеша в конце)
         const API_BASE = "https://sfera-server.onrender.com";
 
         let token = localStorage.getItem("sfera_token") || "";
@@ -1036,7 +1022,7 @@
             if (token) headers["Authorization"] = `Bearer ${token}`;
             const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
             const data = await res.json().catch(() => ({}));
-            if (!res.ok) throw new Error(data.detail || "Ошибка запроса к серверу");
+            if (!res.ok) throw new Error(data.detail || `Ошибка сервера (${res.status})`);
             return data;
         }
 
@@ -1051,13 +1037,6 @@
         document.getElementById("themeToggleBtn").addEventListener("click", () => {
             const current = document.documentElement.getAttribute("data-theme");
             applyTheme(current === "dark" ? "light" : "dark");
-        });
-
-        // Автоформатирование 16-значного кода XXXX-XXXX-XXXX-XXXX
-        const regInviteInput = document.getElementById("regInviteCode");
-        regInviteInput.addEventListener("input", () => {
-            const clean = regInviteInput.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 16);
-            regInviteInput.value = clean.match(/.{1,4}/g)?.join("-") || clean;
         });
 
         // Переключение вкладок Вход / Регистрация
@@ -1075,52 +1054,47 @@
         document.getElementById("loginForm").addEventListener("submit", async (e) => {
             e.preventDefault();
             try {
-                const data = await api("/api/auth/login", {
+                const data = await api("/api/login", {
                     method: "POST",
                     body: JSON.stringify({
-                        identity: document.getElementById("loginIdentity").value.trim(),
+                        login: document.getElementById("loginIdentity").value.trim(),
                         password: document.getElementById("loginPassword").value
                     })
                 });
-                token = data.access_token;
+                token = data.token;
                 localStorage.setItem("sfera_token", token);
-                await enterApp();
+                await enterApp(data.user);
                 toast("С возвращением в Sfera");
             } catch (err) {
                 toast(err.message);
             }
         });
 
-        // Регистрация по 16-значному коду
+        // Открытая регистрация
         document.getElementById("registerForm").addEventListener("submit", async (e) => {
             e.preventDefault();
-            const rawCode = regInviteInput.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
-            if (rawCode.length !== 16) {
-                toast("Введите полный 16-значный код доступа");
-                return;
-            }
             try {
-                const data = await api("/api/auth/register", {
+                const data = await api("/api/register", {
                     method: "POST",
                     body: JSON.stringify({
-                        invite_code: rawCode,
                         display_name: document.getElementById("regDisplayName").value.trim(),
                         username: document.getElementById("regUsername").value.trim().replace(/^@/, ""),
                         email: document.getElementById("regEmail").value.trim(),
                         password: document.getElementById("regPassword").value
                     })
                 });
-                token = data.access_token;
+                token = data.token;
                 localStorage.setItem("sfera_token", token);
-                await enterApp();
-                toast("Код активирован. Добро пожаловать в Sfera!");
+                await enterApp(data.user);
+                toast("Добро пожаловать в Sfera!");
             } catch (err) {
                 toast(err.message);
             }
         });
 
         // Выход
-        document.getElementById("logoutBtn").addEventListener("click", () => {
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+            try { await api("/api/logout", { method: "POST" }); } catch (_) {}
             token = "";
             currentUser = null;
             localStorage.removeItem("sfera_token");
@@ -1162,19 +1136,14 @@
         // Публикация поста
         document.getElementById("publishPostBtn").addEventListener("click", async () => {
             const content = document.getElementById("postContent").value.trim();
-            if (!content && !selectedMediaDataUrl) {
-                toast("Напиши текст или прикрепи фото");
+            if (!content) {
+                toast("Напиши текст поста");
                 return;
             }
             try {
                 await api("/api/posts", {
                     method: "POST",
-                    body: JSON.stringify({
-                        content,
-                        privacy: document.getElementById("postPrivacy").value,
-                        media_url: selectedMediaDataUrl || null,
-                        is_sphere: false
-                    })
+                    body: JSON.stringify({ content })
                 });
                 document.getElementById("postContent").value = "";
                 selectedMediaDataUrl = "";
@@ -1201,7 +1170,7 @@
             try {
                 await api("/api/posts", {
                     method: "POST",
-                    body: JSON.stringify({ content, privacy: "public", is_sphere: true })
+                    body: JSON.stringify({ content: `🌐 Сфера: ${content}` })
                 });
                 document.getElementById("sphereTitleInput").value = "";
                 sphereModal.classList.add("hidden");
@@ -1220,7 +1189,6 @@
             document.getElementById("profUsername").textContent = `@${u.username}`;
             document.getElementById("profCity").textContent = u.city || "";
             document.getElementById("profBio").textContent = u.bio || "";
-            document.getElementById("statPosts").textContent = u.posts_count ?? 0;
             document.getElementById("statFollowers").textContent = u.followers_count ?? 0;
             document.getElementById("statFollowing").textContent = u.following_count ?? 0;
             document.getElementById("profFirstBadge").classList.toggle("hidden", u.badge_type !== "FIRST");
@@ -1241,37 +1209,58 @@
         document.getElementById("editProfileForm").addEventListener("submit", async (e) => {
             e.preventDefault();
             try {
-                const updated = await api("/api/me", {
+                const res = await api("/api/me", {
                     method: "PATCH",
                     body: JSON.stringify({
                         display_name: document.getElementById("editDisplayName").value.trim(),
-                        city: document.getElementById("editCity").value.trim(),
                         bio: document.getElementById("editBio").value.trim()
                     })
                 });
-                renderProfile(updated);
+                renderProfile(res.user);
                 editProfileModal.classList.add("hidden");
+                await loadFeed();
                 toast("Профиль обновлён");
             } catch (err) {
                 toast(err.message);
             }
         });
 
+        // Лайк и удаление поста
+        window.toggleLike = async (postId) => {
+            try {
+                await api(`/api/posts/${postId}/like`, { method: "POST" });
+                await loadFeed();
+            } catch (err) {
+                toast(err.message);
+            }
+        };
+
+        window.deletePost = async (postId) => {
+            try {
+                await api(`/api/posts/${postId}`, { method: "DELETE" });
+                await loadFeed();
+                toast("Пост удалён");
+            } catch (err) {
+                toast(err.message);
+            }
+        };
+
         // Загрузка ленты и Сфер
         async function loadFeed() {
             try {
-                const posts = await api("/api/feed");
+                const data = await api("/api/posts");
+                const posts = data.posts || [];
                 const feedEl = document.getElementById("feedList");
                 const spheresRow = document.getElementById("activeSpheresList");
                 const spheresArchive = document.getElementById("spheresArchiveList");
                 const profilePosts = document.getElementById("profilePostsList");
 
-                const spheres = posts.filter((p) => p.is_sphere);
+                const spheres = posts.filter((p) => p.content.startsWith("🌐 Сфера:"));
                 spheresRow.innerHTML = spheres.length
                     ? spheres.map((s) => `
                         <div class="sphere-pill">
                             <div class="sphere-pill-author">@${escapeHtml(s.username)}</div>
-                            <div class="sphere-pill-text">${escapeHtml(s.content)}</div>
+                            <div class="sphere-pill-text">${escapeHtml(s.content.replace(/^🌐 Сфера:\s*/, ""))}</div>
                         </div>
                     `).join("")
                     : `<div class="empty-state" style="padding:8px 0;">Пока нет активных Сфер</div>`;
@@ -1284,14 +1273,20 @@
                                 <div>
                                     <div class="post-name-row">
                                         <span>${escapeHtml(p.display_name || p.username)}</span>
-                                        ${p.badge_type === "FIRST" ? `<span class="badge-first" style="font-size:9px;padding:2px 7px;">FIRST</span>` : ""}
                                     </div>
-                                    <div class="post-meta">@${escapeHtml(p.username)} · ${p.is_sphere ? "Сфера 24ч" : "Пост"}</div>
+                                    <div class="post-meta">@${escapeHtml(p.username)} · ${p.content.startsWith("🌐 Сфера:") ? "Сфера 24ч" : "Пост"}</div>
                                 </div>
                             </div>
                         </div>
-                        ${p.content ? `<div class="post-body">${escapeHtml(p.content)}</div>` : ""}
-                        ${p.media_url ? `<img src="${escapeHtml(p.media_url)}" class="post-image" alt="Медиа">` : ""}
+                        <div class="post-body">${escapeHtml(p.content)}</div>
+                        <div class="post-actions">
+                            <button type="button" class="post-action-btn ${p.liked_by_me ? "liked" : ""}" onclick="toggleLike(${p.id})">
+                                ♥ ${p.likes_count ?? 0}
+                            </button>
+                            ${currentUser && p.username === currentUser.username
+                                ? `<button type="button" class="post-action-btn del" onclick="deletePost(${p.id})">Удалить</button>`
+                                : ""}
+                        </div>
                     </article>
                 `;
 
@@ -1305,6 +1300,7 @@
 
                 if (currentUser) {
                     const myPosts = posts.filter((p) => p.username === currentUser.username);
+                    document.getElementById("statPosts").textContent = myPosts.length;
                     profilePosts.innerHTML = myPosts.length
                         ? myPosts.map(renderPost).join("")
                         : `<div class="glass-card empty-state">У тебя пока нет публикаций.</div>`;
@@ -1314,61 +1310,25 @@
             }
         }
 
-        // Чаты
-        async function openChat(username) {
-            const clean = username.trim().replace(/^@/, "");
+        // Чаты (заглушка до добавления роутера сообщений на бэкенде)
+        document.getElementById("openChatBtn").addEventListener("click", () => {
+            const clean = document.getElementById("chatTargetInput").value.trim().replace(/^@/, "");
             if (!clean) return;
             activeChatPeer = clean;
             document.getElementById("activeChatTitle").textContent = `@${clean}`;
-            try {
-                const msgs = await api(`/api/messages/${encodeURIComponent(clean)}`);
-                const box = document.getElementById("chatMessagesList");
-                box.innerHTML = msgs.length
-                    ? msgs.map((m) => `
-                        <div class="msg-bubble ${currentUser && m.sender_username === currentUser.username ? "mine" : ""}">
-                            ${escapeHtml(m.content)}
-                        </div>
-                    `).join("")
-                    : `<div class="empty-state">Начни диалог с @${escapeHtml(clean)}</div>`;
-                box.scrollTop = box.scrollHeight;
-            } catch (err) {
-                toast(err.message);
-            }
-        }
-
-        document.getElementById("openChatBtn").addEventListener("click", () => {
-            openChat(document.getElementById("chatTargetInput").value);
+            document.getElementById("chatMessagesList").innerHTML =
+                `<div class="empty-state">Чат с @${escapeHtml(clean)} подключится после добавления модуля сообщений на сервер</div>`;
         });
 
-        document.getElementById("chatSendForm").addEventListener("submit", async (e) => {
+        document.getElementById("chatSendForm").addEventListener("submit", (e) => {
             e.preventDefault();
-            if (!activeChatPeer) {
-                toast("Сначала выбери собеседника");
-                return;
-            }
-            const input = document.getElementById("chatMessageInput");
-            const content = input.value.trim();
-            if (!content) return;
-            try {
-                await api("/api/messages", {
-                    method: "POST",
-                    body: JSON.stringify({
-                        recipient_username: activeChatPeer,
-                        content,
-                        is_e2ee: document.getElementById("chatE2eeToggle").checked
-                    })
-                });
-                input.value = "";
-                await openChat(activeChatPeer);
-            } catch (err) {
-                toast(err.message);
-            }
+            toast("Личные сообщения скоро появятся на сервере");
         });
 
         // Вход в приложение
-        async function enterApp() {
-            const me = await api("/api/me");
-            renderProfile(me);
+        async function enterApp(userObj = null) {
+            const user = userObj || (await api("/api/me")).user;
+            renderProfile(user);
             document.getElementById("authView").classList.add("hidden");
             document.getElementById("appView").classList.remove("hidden");
             await loadFeed();
