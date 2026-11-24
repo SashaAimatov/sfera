@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sfera — Alfa 1.2</title>
+    <link rel="icon" type="image/png" href="./assets/logo-sfera.png">
+    <style>
+        :root {
+            --bg-main: #0b0d12;
+            --bg-glass: rgba(22, 26, 35, 0.62);
+            --bg-glass-strong: rgba(28, 33, 45, 0.78);
+            --bg-input: rgba(255, 255, 255, 0.06);
+            --border-glass: rgba(255, 255, 255, 0.12);
+            --border-highlight: rgba(255, 255, 255, 0.22);
+            --text-primary: #f3f5f8;
+            --text-secondary: #a1a9b8;
+            --text-muted: #6c7486;
+            --accent: #38bdf8;
+            --accent-2: #818cf8;
+            --accent-grad: linear-gradient(135deg, #22d3ee 0%, #3b82f6 52%, #a855f7 100%);
+            --danger: #f87171;
+            --shadow-glass: 0 18px 45px rgba(0, 0, 0, 0.45);
+            --blob-1: rgba(34, 211, 238, 0.22);
+            --blob-2: rgba(168, 85, 247, 0.22);
+            --blob-3: rgba(59, 130, 246, 0.18);
+            --radius-lg: 22px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+        }
+
+        [data-theme="light"] {
+            --bg-main: #f6f3ec;
+            --bg-glass: rgba(255, 252, 246, 0.68);
+            --bg-glass-strong: rgba(255, 252, 247, 0.86);
+            --bg-input: rgba(15, 23, 42, 0.05);
+            --border-glass: rgba(15, 23, 42, 0.09);
+            --border-highlight: rgba(255, 255, 255, 0.85);
+            --text-primary: #141824;
+            --text-secondary: #4e5668;
+            --text-muted: #7c8496;
+            --shadow-glass: 0 14px 36px rgba(20, 24, 36, 0.08);
+            --blob-1: rgba(56, 189, 248, 0.22);
+            --blob-2: rgba(192, 132, 252, 0.2);
+            --blob-3: rgba(251, 191, 36, 0.14);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Фоновые размытые пятна */
+        .bg-blobs {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(95px);
+            opacity: 0.9;
+            animation: floatBlob 18s ease-in-out infinite alternate;
+        }
+
+        .blob-1 { width: 380px; height: 380px; background: var(--blob-1); top: -90px; left: -80px; }
+        .blob-2 { width: 420px; height: 420px; background: var(--blob-2); bottom: -110px; right: -90px; animation-delay: -6s; }
+        .blob-3 { width: 300px; height: 300px; background: var(--blob-3); top: 42%; left: 48%; animation-delay: -11s; }
+
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(28px, -24px) scale(1.08); }
+        }
+
+        /* Матовое стекло */
+        .glass-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+            border: 1px solid var(--border-glass);
+            box-shadow: var(--shadow-glass), inset 0 1px 0 var(--border-highlight);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+        }
+
+        /* Уведомления */
+        .toast-container {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: min(92vw, 380px);
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--bg-glass-strong);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            color: var(--text-primary);
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: var(--shadow-glass);
+            animation: toastIn 0.22s ease;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Авторизация */
+        .auth-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 26px 22px;
+        }
+
+        .auth-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .brand-logo-lg { width: 58px; height: 58px; object-fit: contain; }
+        .brand-logo-sm { width: 28px; height: 28px; object-fit: contain; }
+
+        .brand-title { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+
+        .version-pill {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-glass);
+            color: var(--text-secondary);
+        }
+
+        .version-pill.small { font-size: 10px; padding: 2px 8px; }
+
+        .auth-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            background: var(--bg-input);
+            padding: 4px;
+            border-radius: 13px;
+            margin-bottom: 18px;
+        }
+
+        .tab-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 9px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--bg-glass-strong);
+            color: var(--text-primary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        .invite-notice {
+            font-size: 12px;
+            line-height: 1.45;
+            color: var(--text-secondary);
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            padding: 10px 12px;
+            border-radius: 12px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-glass);
+            color: var(--text-primary);
+            border-radius: var(--radius-sm);
+            padding: 11px 13px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--accent);
+        }
+
+        .code-input {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        textarea { resize: vertical; min-height: 76px; }
+
+        /* Кнопки */
+        .btn-primary, .btn-secondary, .chip-btn, .icon-btn, .icon-btn-sm {
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            transition: transform 0.12s ease, opacity 0.2s ease, background 0.2s ease;
+        }
+
+        .btn-primary:active, .btn-secondary:active, .icon-btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: var(--accent-grad);
+            color: #ffffff;
+            padding: 11px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 1px solid var(--border-glass);
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+        }
+
+        .btn-primary.sm, .btn-secondary.sm { padding: 8px 13px; font-size: 12px; }
+        .full-width { width: 100%; }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 11px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-glass);
+            color: var(--text-primary);
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn-sm {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-glass);
+            color: var(--text-primary);
+            font-size: 12px;
+        }
+
+        .chip-btn {
+            background: rgba(56, 189, 248, 0.14);
+            color: var(--accent);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 6px 11px;
+            border-radius: 999px;
+            font-size: 12px;
+        }
+
+        /* Каркас приложения */
+        .app-shell {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 76px 14px 92px;
+        }
+
+        .glass-header {
+            position: fixed;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(calc(100% - 28px), 732px);
+            height: 54px;
+            padding: 0 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-glass-strong);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid var(--border-glass);
+            border-radius: 18px;
+            box-shadow: var(--shadow-glass);
+            z-index: 100;
+        }
+
+        .header-left, .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-title { font-size: 17px; font-weight: 800; letter-spacing: -0.02em; }
+
+        .page-section {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .section-title { font-size: 16px; font-weight: 700; }
+        .section-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+        .section-subtitle { font-size: 13px; color: var(--text-secondary); line-height: 1.45; }
+
+        /* Активные Сферы */
+        .spheres-row {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+
+        .spheres-row::-webkit-scrollbar { display: none; }
+
+        .sphere-pill {
+            flex: 0 0 auto;
+            min-width: 128px;
+            max-width: 180px;
+            padding: 10px 12px;
+            border-radius: 16px;
+            background: var(--bg-input);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            cursor: pointer;
+        }
+
+        .sphere-pill-author { font-size: 11px; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+        .sphere-pill-text { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Композер */
+        .composer-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .composer-tools {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tool-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 11px;
+            border-radius: 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-glass);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .glass-select {
+            width: auto;
+            padding: 7px 10px;
+            font-size: 12px;
+            border-radius: 10px;
+        }
+
+        .media-preview {
+            position: relative;
+            margin-top: 10px;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--border-glass);
+        }
+
+        .media-preview img {
+            width: 100%;
+            max-height: 260px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .media-preview .icon-btn-sm {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.65);
+            color: #fff;
+        }
+
+        /* Посты */
+        .feed-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .post-card {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .post-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-grad);
+            color: #fff;
+            font-weight: 800;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .post-name-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .post-meta { font-size: 12px; color: var(--text-muted); }
+        .post-body { font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+
+        .post-image {
+            width: 100%;
+            max-height: 360px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: 1px solid var(--border-glass);
+        }
+
+        .post-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-top: 4px;
+        }
+
+        .badge-first {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: var(--accent-grad);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Чаты */
+        .chat-layout {
+            display: grid;
+            grid-template-columns: 230px 1fr;
+            gap: 14px;
+            min-height: 460px;
+        }
+
+        .chat-dialogs {
+            border-right: 1px solid var(--border-glass);
+            padding-right: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-open-box {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dialogs-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            overflow-y: auto;
+        }
+
+        .dialog-item {
+            padding: 9px 10px;
+            border-radius: 12px;
+            background: var(--bg-input);
+            border: 1px solid transparent;
+            cursor: pointer;
+            text-align: left;
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        .dialog-item.active { border-color: var(--accent); }
+
+        .chat-thread-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .chat-thread-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .chat-peer-name { font-size: 15px; font-weight: 700; }
+        .chat-peer-meta { font-size: 11px; color: var(--text-muted); }
+
+        .chat-messages {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .msg-bubble {
+            max-width: 80%;
+            padding: 9px 12px;
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.4;
+            background: var(--bg-input);
+            align-self: flex-start;
+        }
+
+        .msg-bubble.mine {
+            background: var(--accent-grad);
+            color: #fff;
+            align-self: flex-end;
+        }
+
+        .chat-input-bar {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Профиль */
+        .profile-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .profile-identity {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-identity .avatar-circle { width: 58px; height: 58px; font-size: 22px; }
+        .profile-name { font-size: 18px; font-weight: 800; }
+        .profile-handle { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+        .profile-city { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .profile-bio { font-size: 14px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 14px; }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .stat-box {
+            background: var(--bg-input);
+            border: 1px solid var(--border-glass);
+            border-radius: 14px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .stat-value { display: block; font-size: 17px; font-weight: 800; }
+        .stat-label { font-size: 11px; color: var(--text-muted); }
+
+        /* Нижняя навигация */
+        .glass-nav {
+            position: fixed;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(calc(100% - 28px), 520px);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            padding: 6px;
+            background: var(--bg-glass-strong);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid var(--border-glass);
+            border-radius: 18px;
+            box-shadow: var(--shadow-glass);
+            z-index: 100;
+        }
+
+        .nav-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            padding: 10px 6px;
+            border-radius: 13px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn.active {
+            background: var(--bg-input);
+            color: var(--text-primary);
+            box-shadow: inset 0 0 0 1px var(--border-glass);
+        }
+
+        /* Модалки */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 500;
+        }
+
+        .modal-card { width: 100%; max-width: 420px; }
+        .modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+
+        .empty-state {
+            text-align: center;
+            padding: 24px 12px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        @media (max-width: 640px) {
+            .chat-layout { grid-template-columns: 1fr; }
+            .chat-dialogs { border-right: none; border-bottom: 1px solid var(--border-glass); padding-right: 0; padding-bottom: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-blobs" aria-hidden="true">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+    <!-- ==================== АВТОРИЗАЦИЯ ==================== -->
+    <main id="authView" class="auth-wrapper">
+        <section class="glass-card auth-card">
+            <div class="auth-header">
+                <img src="./assets/logo-sfera.png" alt="Sfera" class="brand-logo-lg" onerror="this.style.display='none'">
+                <h1 class="brand-title">Sfera</h1>
+                <span class="version-pill">Alfa 1.2</span>
+            </div>
+
+            <div class="auth-tabs" role="tablist">
+                <button type="button" class="tab-btn active" data-auth-tab="login">Вход</button>
+                <button type="button" class="tab-btn" data-auth-tab="register">По 16-значному коду</button>
+            </div>
+
+            <form id="loginForm" class="auth-form">
+                <div class="input-group">
+                    <label for="loginIdentity">Почта или @username</label>
+                    <input type="text" id="loginIdentity" placeholder="@username или email" required autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <label for="loginPassword">Пароль</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn-primary full-width">Войти в Сферу</button>
+            </form>
+
+            <form id="registerForm" class="auth-form hidden">
+                <div class="invite-notice">
+                    Регистрация закрыта: требуется один из 15 одноразовых 16-значных кодов, выведенных в консоль сервера.
+                </div>
+                <div class="input-group">
+                    <label for="regInviteCode">16-значный код доступа</label>
+                    <input
+                        type="text"
+                        id="regInviteCode"
+                        class="code-input"
+                        placeholder="XXXX-XXXX-XXXX-XXXX"
+                        maxlength="19"
+                        required
+                        autocomplete="off"
+                    >
+                </div>
+                <div class="input-group">
+                    <label for="regDisplayName">Имя</label>
+                    <input type="text" id="regDisplayName" placeholder="Как тебя зовут" required>
+                </div>
+                <div class="input-group">
+                    <label for="regUsername">Юзернейм</label>
+                    <input type="text" id="regUsername" placeholder="username (без @)" required>
+                </div>
+                <div class="input-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" placeholder="name@example.com" required autocomplete="email">
+                </div>
+                <div class="input-group">
+                    <label for="regPassword">Пароль</label>
+                    <input type="password" id="regPassword" placeholder="Минимум 6 символов" required autocomplete="new-password">
+                </div>
+                <button type="submit" class="btn-primary full-width">Активировать код и войти</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- ==================== ПРИЛОЖЕНИЕ ==================== -->
+    <div id="appView" class="app-shell hidden">
+        <header class="glass-header">
+            <div class="header-left">
+                <img src="./assets/logo-sfera.png" alt="Sfera" class="brand-logo-sm" onerror="this.style.display='none'">
+                <span class="header-title">Sfera</span>
+                <span class="version-pill small">Alfa 1.2</span>
+            </div>
+            <div class="header-actions">
+                <button type="button" id="themeToggleBtn" class="icon-btn" title="Сменить тему" aria-label="Сменить тему">◐</button>
+                <button type="button" id="logoutBtn" class="icon-btn" title="Выйти" aria-label="Выйти">⎋</button>
+            </div>
+        </header>
+
+        <main class="app-content">
+            <!-- ЛЕНТА -->
+            <section id="sec-feed" class="page-section">
+                <div class="glass-card">
+                    <div class="section-head">
+                        <span class="section-label">Активные Сферы · 24ч</span>
+                        <button type="button" id="openCreateSphereBtn" class="chip-btn">+ Сфера</button>
+                    </div>
+                    <div id="activeSpheresList" class="spheres-row">
+                        <div class="empty-state" style="padding:8px 0;">Пока нет активных Сфер</div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <textarea id="postContent" rows="3" placeholder="Что нового в Сфере?"></textarea>
+                    <div id="postMediaPreviewWrap" class="media-preview hidden">
+                        <img id="postMediaPreview" src="" alt="Превью">
+                        <button type="button" id="removePostMediaBtn" class="icon-btn-sm">✕</button>
+                    </div>
+                    <div class="composer-footer">
+                        <div class="composer-tools">
+                            <label class="tool-chip">
+                                <span>Фото</span>
+                                <input type="file" id="postMediaInput" accept="image/*" hidden>
+                            </label>
+                            <select id="postPrivacy" class="glass-select" aria-label="Приватность">
+                                <option value="public">Всем</option>
+                                <option value="followers">Подписчикам</option>
+                                <option value="invite">По приглашению</option>
+                            </select>
+                        </div>
+                        <button type="button" id="publishPostBtn" class="btn-primary">Опубликовать</button>
+                    </div>
+                </div>
+
+                <div id="feedList" class="feed-list"></div>
+            </section>
+
+            <!-- СФЕРЫ И КАПСУЛЫ -->
+            <section id="sec-spheres" class="page-section hidden">
+                <div class="glass-card">
+                    <div class="section-head">
+                        <h2 class="section-title">Сферы и Капсулы</h2>
+                        <button type="button" id="createSphereTabBtn" class="btn-primary sm">Новая Сфера</button>
+                    </div>
+                    <p class="section-subtitle">Активные Сферы живут 24 часа, после чего переходят в Капсулы воспоминаний.</p>
+                </div>
+                <div id="spheresArchiveList" class="feed-list"></div>
+            </section>
+
+            <!-- ЧАТЫ -->
+            <section id="sec-chats" class="page-section hidden">
+                <div class="glass-card chat-layout">
+                    <aside class="chat-dialogs">
+                        <div class="section-head">
+                            <h2 class="section-title">Диалоги</h2>
+                        </div>
+                        <div class="chat-open-box">
+                            <input type="text" id="chatTargetInput" placeholder="@username">
+                            <button type="button" id="openChatBtn" class="btn-secondary sm">Открыть</button>
+                        </div>
+                        <div id="dialogsList" class="dialogs-list"></div>
+                    </aside>
+
+                    <div class="chat-thread-panel">
+                        <div class="chat-thread-head">
+                            <div>
+                                <div id="activeChatTitle" class="chat-peer-name">Выбери диалог</div>
+                                <div id="activeChatMeta" class="chat-peer-meta">Приватные сообщения Sfera</div>
+                            </div>
+                            <label class="tool-chip">
+                                <input type="checkbox" id="chatE2eeToggle">
+                                <span>E2EE</span>
+                            </label>
+                        </div>
+                        <div id="chatMessagesList" class="chat-messages">
+                            <div class="empty-state">Выбери собеседника слева или введи @username</div>
+                        </div>
+                        <form id="chatSendForm" class="chat-input-bar">
+                            <input type="text" id="chatMessageInput" placeholder="Написать сообщение..." autocomplete="off">
+                            <button type="submit" class="btn-primary sm">Отправить</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ПРОФИЛЬ -->
+            <section id="sec-profile" class="page-section hidden">
+                <div class="glass-card">
+                    <div class="profile-top">
+                        <div class="profile-identity">
+                            <div class="avatar-circle" id="profAvatar">S</div>
+                            <div>
+                                <div class="profile-name" id="profDisplayName">Имя</div>
+                                <div class="profile-handle" id="profUsername">@username</div>
+                                <div class="profile-city" id="profCity"></div>
+                            </div>
+                        </div>
+                        <!-- Только бейдж FIRST при наличии, без второго переключателя темы -->
+                        <span id="profFirstBadge" class="badge-first hidden" onclick="toast('Официальный аккаунт FIRST • Подтверждено Sfera')">FIRST</span>
+                    </div>
+
+                    <p id="profBio" class="profile-bio"></p>
+
+                    <div class="profile-stats">
+                        <div class="stat-box">
+                            <span class="stat-value" id="statPosts">0</span>
+                            <span class="stat-label">Постов</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-value" id="statFollowers">0</span>
+                            <span class="stat-label">Подписчиков</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-value" id="statFollowing">0</span>
+                            <span class="stat-label">Подписок</span>
+                        </div>
+                    </div>
+
+                    <button type="button" id="editProfileBtn" class="btn-secondary full-width">Редактировать профиль</button>
+                </div>
+
+                <div id="profilePostsList" class="feed-list"></div>
+            </section>
+        </main>
+
+        <nav class="glass-nav" aria-label="Навигация">
+            <button type="button" class="nav-btn active" data-nav="sec-feed">Лента</button>
+            <button type="button" class="nav-btn" data-nav="sec-spheres">Сферы</button>
+            <button type="button" class="nav-btn" data-nav="sec-chats">Чаты</button>
+            <button type="button" class="nav-btn" data-nav="sec-profile">Профиль</button>
+        </nav>
+    </div>
+
+    <!-- МОДАЛКА: НОВАЯ СФЕРА -->
+    <div id="sphereModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+        <div class="glass-card modal-card">
+            <div class="modal-head">
+                <h3 class="section-title">Новая Сфера (24 часа)</h3>
+                <button type="button" id="closeSphereModalBtn" class="icon-btn-sm">✕</button>
+            </div>
+            <form id="sphereCreateForm" class="auth-form">
+                <div class="input-group">
+                    <label for="sphereTitleInput">Мысль или событие</label>
+                    <input type="text" id="sphereTitleInput" placeholder="О чём сейчас твоя Сфера?" required>
+                </div>
+                <button type="submit" class="btn-primary full-width">Запустить Сферу</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА: РЕДАКТИРОВАНИЕ ПРОФИЛЯ -->
+    <div id="editProfileModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+        <div class="glass-card modal-card">
+            <div class="modal-head">
+                <h3 class="section-title">Редактирование профиля</h3>
+                <button type="button" id="closeEditProfileBtn" class="icon-btn-sm">✕</button>
+            </div>
+            <form id="editProfileForm" class="auth-form">
+                <div class="input-group">
+                    <label for="editDisplayName">Имя</label>
+                    <input type="text" id="editDisplayName" required>
+                </div>
+                <div class="input-group">
+                    <label for="editCity">Город</label>
+                    <input type="text" id="editCity" placeholder="Город">
+                </div>
+                <div class="input-group">
+                    <label for="editBio">О себе</label>
+                    <textarea id="editBio" rows="3" placeholder="Коротко о себе..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary full-width">Сохранить</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Для GitHub Pages укажи здесь публичный URL твоего FastAPI-сервера (без слеша в конце)
+        const API_BASE = "";
+
+        let token = localStorage.getItem("sfera_token") || "";
+        let currentUser = null;
+        let activeChatPeer = "";
+        let selectedMediaDataUrl = "";
+
+        function toast(message) {
+            const container = document.getElementById("toastContainer");
+            const el = document.createElement("div");
+            el.className = "toast";
+            el.textContent = message;
+            container.appendChild(el);
+            setTimeout(() => el.remove(), 3200);
+        }
+
+        function escapeHtml(str = "") {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        async function api(path, options = {}) {
+            const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
+            if (token) headers["Authorization"] = `Bearer ${token}`;
+            const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.detail || "Ошибка запроса к серверу");
+            return data;
+        }
+
+        // Тема (единый переключатель в шапке)
+        function applyTheme(theme) {
+            document.documentElement.setAttribute("data-theme", theme);
+            localStorage.setItem("sfera_theme", theme);
+        }
+
+        applyTheme(localStorage.getItem("sfera_theme") || "dark");
+
+        document.getElementById("themeToggleBtn").addEventListener("click", () => {
+            const current = document.documentElement.getAttribute("data-theme");
+            applyTheme(current === "dark" ? "light" : "dark");
+        });
+
+        // Автоформатирование 16-значного кода XXXX-XXXX-XXXX-XXXX
+        const regInviteInput = document.getElementById("regInviteCode");
+        regInviteInput.addEventListener("input", () => {
+            const clean = regInviteInput.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 16);
+            regInviteInput.value = clean.match(/.{1,4}/g)?.join("-") || clean;
+        });
+
+        // Переключение вкладок Вход / Регистрация
+        document.querySelectorAll("[data-auth-tab]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll("[data-auth-tab]").forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+                const isLogin = btn.dataset.authTab === "login";
+                document.getElementById("loginForm").classList.toggle("hidden", !isLogin);
+                document.getElementById("registerForm").classList.toggle("hidden", isLogin);
+            });
+        });
+
+        // Вход
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            try {
+                const data = await api("/api/auth/login", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        identity: document.getElementById("loginIdentity").value.trim(),
+                        password: document.getElementById("loginPassword").value
+                    })
+                });
+                token = data.access_token;
+                localStorage.setItem("sfera_token", token);
+                await enterApp();
+                toast("С возвращением в Sfera");
+            } catch (err) {
+                toast(err.message);
+            }
+        });
+
+        // Регистрация по 16-значному коду
+        document.getElementById("registerForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const rawCode = regInviteInput.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+            if (rawCode.length !== 16) {
+                toast("Введите полный 16-значный код доступа");
+                return;
+            }
+            try {
+                const data = await api("/api/auth/register", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        invite_code: rawCode,
+                        display_name: document.getElementById("regDisplayName").value.trim(),
+                        username: document.getElementById("regUsername").value.trim().replace(/^@/, ""),
+                        email: document.getElementById("regEmail").value.trim(),
+                        password: document.getElementById("regPassword").value
+                    })
+                });
+                token = data.access_token;
+                localStorage.setItem("sfera_token", token);
+                await enterApp();
+                toast("Код активирован. Добро пожаловать в Sfera!");
+            } catch (err) {
+                toast(err.message);
+            }
+        });
+
+        // Выход
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            token = "";
+            currentUser = null;
+            localStorage.removeItem("sfera_token");
+            document.getElementById("appView").classList.add("hidden");
+            document.getElementById("authView").classList.remove("hidden");
+            toast("Вы вышли из аккаунта");
+        });
+
+        // Нижняя навигация
+        document.querySelectorAll("[data-nav]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll("[data-nav]").forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+                document.querySelectorAll(".page-section").forEach((sec) => sec.classList.add("hidden"));
+                document.getElementById(btn.dataset.nav).classList.remove("hidden");
+            });
+        });
+
+        // Прикрепление фото к посту
+        const postMediaInput = document.getElementById("postMediaInput");
+        postMediaInput.addEventListener("change", () => {
+            const file = postMediaInput.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                selectedMediaDataUrl = reader.result;
+                document.getElementById("postMediaPreview").src = selectedMediaDataUrl;
+                document.getElementById("postMediaPreviewWrap").classList.remove("hidden");
+            };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById("removePostMediaBtn").addEventListener("click", () => {
+            selectedMediaDataUrl = "";
+            postMediaInput.value = "";
+            document.getElementById("postMediaPreviewWrap").classList.add("hidden");
+        });
+
+        // Публикация поста
+        document.getElementById("publishPostBtn").addEventListener("click", async () => {
+            const content = document.getElementById("postContent").value.trim();
+            if (!content && !selectedMediaDataUrl) {
+                toast("Напиши текст или прикрепи фото");
+                return;
+            }
+            try {
+                await api("/api/posts", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        content,
+                        privacy: document.getElementById("postPrivacy").value,
+                        media_url: selectedMediaDataUrl || null,
+                        is_sphere: false
+                    })
+                });
+                document.getElementById("postContent").value = "";
+                selectedMediaDataUrl = "";
+                postMediaInput.value = "";
+                document.getElementById("postMediaPreviewWrap").classList.add("hidden");
+                await loadFeed();
+                toast("Опубликовано");
+            } catch (err) {
+                toast(err.message);
+            }
+        });
+
+        // Модалка Сферы
+        const sphereModal = document.getElementById("sphereModal");
+        const openSphereModal = () => sphereModal.classList.remove("hidden");
+        document.getElementById("openCreateSphereBtn").addEventListener("click", openSphereModal);
+        document.getElementById("createSphereTabBtn").addEventListener("click", openSphereModal);
+        document.getElementById("closeSphereModalBtn").addEventListener("click", () => sphereModal.classList.add("hidden"));
+
+        document.getElementById("sphereCreateForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const content = document.getElementById("sphereTitleInput").value.trim();
+            if (!content) return;
+            try {
+                await api("/api/posts", {
+                    method: "POST",
+                    body: JSON.stringify({ content, privacy: "public", is_sphere: true })
+                });
+                document.getElementById("sphereTitleInput").value = "";
+                sphereModal.classList.add("hidden");
+                await loadFeed();
+                toast("Активная Сфера запущена на 24 часа");
+            } catch (err) {
+                toast(err.message);
+            }
+        });
+
+        // Рендер профиля
+        function renderProfile(u) {
+            currentUser = u;
+            document.getElementById("profAvatar").textContent = (u.display_name || u.username || "S")[0].toUpperCase();
+            document.getElementById("profDisplayName").textContent = u.display_name || u.username;
+            document.getElementById("profUsername").textContent = `@${u.username}`;
+            document.getElementById("profCity").textContent = u.city || "";
+            document.getElementById("profBio").textContent = u.bio || "";
+            document.getElementById("statPosts").textContent = u.posts_count ?? 0;
+            document.getElementById("statFollowers").textContent = u.followers_count ?? 0;
+            document.getElementById("statFollowing").textContent = u.following_count ?? 0;
+            document.getElementById("profFirstBadge").classList.toggle("hidden", u.badge_type !== "FIRST");
+        }
+
+        // Редактирование профиля
+        const editProfileModal = document.getElementById("editProfileModal");
+        document.getElementById("editProfileBtn").addEventListener("click", () => {
+            if (!currentUser) return;
+            document.getElementById("editDisplayName").value = currentUser.display_name || "";
+            document.getElementById("editCity").value = currentUser.city || "";
+            document.getElementById("editBio").value = currentUser.bio || "";
+            editProfileModal.classList.remove("hidden");
+        });
+
+        document.getElementById("closeEditProfileBtn").addEventListener("click", () => editProfileModal.classList.add("hidden"));
+
+        document.getElementById("editProfileForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            try {
+                const updated = await api("/api/me", {
+                    method: "PATCH",
+                    body: JSON.stringify({
+                        display_name: document.getElementById("editDisplayName").value.trim(),
+                        city: document.getElementById("editCity").value.trim(),
+                        bio: document.getElementById("editBio").value.trim()
+                    })
+                });
+                renderProfile(updated);
+                editProfileModal.classList.add("hidden");
+                toast("Профиль обновлён");
+            } catch (err) {
+                toast(err.message);
+            }
+        });
+
+        // Загрузка ленты и Сфер
+        async function loadFeed() {
+            try {
+                const posts = await api("/api/feed");
+                const feedEl = document.getElementById("feedList");
+                const spheresRow = document.getElementById("activeSpheresList");
+                const spheresArchive = document.getElementById("spheresArchiveList");
+                const profilePosts = document.getElementById("profilePostsList");
+
+                const spheres = posts.filter((p) => p.is_sphere);
+                spheresRow.innerHTML = spheres.length
+                    ? spheres.map((s) => `
+                        <div class="sphere-pill">
+                            <div class="sphere-pill-author">@${escapeHtml(s.username)}</div>
+                            <div class="sphere-pill-text">${escapeHtml(s.content)}</div>
+                        </div>
+                    `).join("")
+                    : `<div class="empty-state" style="padding:8px 0;">Пока нет активных Сфер</div>`;
+
+                const renderPost = (p) => `
+                    <article class="glass-card post-card">
+                        <div class="post-head">
+                            <div class="post-author">
+                                <div class="avatar-circle">${escapeHtml((p.display_name || p.username || "S")[0].toUpperCase())}</div>
+                                <div>
+                                    <div class="post-name-row">
+                                        <span>${escapeHtml(p.display_name || p.username)}</span>
+                                        ${p.badge_type === "FIRST" ? `<span class="badge-first" style="font-size:9px;padding:2px 7px;">FIRST</span>` : ""}
+                                    </div>
+                                    <div class="post-meta">@${escapeHtml(p.username)} · ${p.is_sphere ? "Сфера 24ч" : "Пост"}</div>
+                                </div>
+                            </div>
+                        </div>
+                        ${p.content ? `<div class="post-body">${escapeHtml(p.content)}</div>` : ""}
+                        ${p.media_url ? `<img src="${escapeHtml(p.media_url)}" class="post-image" alt="Медиа">` : ""}
+                    </article>
+                `;
+
+                feedEl.innerHTML = posts.length
+                    ? posts.map(renderPost).join("")
+                    : `<div class="glass-card empty-state">Лента пока пуста. Напиши первый пост!</div>`;
+
+                spheresArchive.innerHTML = spheres.length
+                    ? spheres.map(renderPost).join("")
+                    : `<div class="glass-card empty-state">Активных Сфер и Капсул пока нет.</div>`;
+
+                if (currentUser) {
+                    const myPosts = posts.filter((p) => p.username === currentUser.username);
+                    profilePosts.innerHTML = myPosts.length
+                        ? myPosts.map(renderPost).join("")
+                        : `<div class="glass-card empty-state">У тебя пока нет публикаций.</div>`;
+                }
+            } catch (err) {
+                toast(err.message);
+            }
+        }
+
+        // Чаты
+        async function openChat(username) {
+            const clean = username.trim().replace(/^@/, "");
+            if (!clean) return;
+            activeChatPeer = clean;
+            document.getElementById("activeChatTitle").textContent = `@${clean}`;
+            try {
+                const msgs = await api(`/api/messages/${encodeURIComponent(clean)}`);
+                const box = document.getElementById("chatMessagesList");
+                box.innerHTML = msgs.length
+                    ? msgs.map((m) => `
+                        <div class="msg-bubble ${currentUser && m.sender_username === currentUser.username ? "mine" : ""}">
+                            ${escapeHtml(m.content)}
+                        </div>
+                    `).join("")
+                    : `<div class="empty-state">Начни диалог с @${escapeHtml(clean)}</div>`;
+                box.scrollTop = box.scrollHeight;
+            } catch (err) {
+                toast(err.message);
+            }
+        }
+
+        document.getElementById("openChatBtn").addEventListener("click", () => {
+            openChat(document.getElementById("chatTargetInput").value);
+        });
+
+        document.getElementById("chatSendForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            if (!activeChatPeer) {
+                toast("Сначала выбери собеседника");
+                return;
+            }
+            const input = document.getElementById("chatMessageInput");
+            const content = input.value.trim();
+            if (!content) return;
+            try {
+                await api("/api/messages", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        recipient_username: activeChatPeer,
+                        content,
+                        is_e2ee: document.getElementById("chatE2eeToggle").checked
+                    })
+                });
+                input.value = "";
+                await openChat(activeChatPeer);
+            } catch (err) {
+                toast(err.message);
+            }
+        });
+
+        // Вход в приложение
+        async function enterApp() {
+            const me = await api("/api/me");
+            renderProfile(me);
+            document.getElementById("authView").classList.add("hidden");
+            document.getElementById("appView").classList.remove("hidden");
+            await loadFeed();
+        }
+
+        if (token) {
+            enterApp().catch(() => {
+                localStorage.removeItem("sfera_token");
+                token = "";
+            });
+        }
+    </script>
+</body>
+</html>
