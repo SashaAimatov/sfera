@@ -1,1794 +1,1912 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="dark">
+<html lang="ru" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SFERA</title>
-  <style>
-    :root {
-      --bg: #0f1722;
-      --surface: #16202e;
-      --surface-2: #1c2838;
-      --header-bg: rgba(18, 26, 38, 0.86);
-      --nav-bg: rgba(16, 23, 34, 0.9);
-      --border: rgba(255, 255, 255, 0.08);
-      --text: #f1f5f9;
-      --muted: #8fa0b5;
-      --teal: #14b8a6;
-      --teal-bright: #2dd4bf;
-      --purple: #8b5cf6;
-      --blue: #3b82f6;
-      --danger: #f43f5e;
-      --glow-1: rgba(20, 184, 166, 0.22);
-      --glow-2: rgba(139, 92, 246, 0.22);
-      --shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-    }
-
-    [data-theme="light"] {
-      --bg: #eef2f7;
-      --surface: #ffffff;
-      --surface-2: #f4f7fb;
-      --header-bg: rgba(244, 247, 251, 0.88);
-      --nav-bg: rgba(248, 250, 252, 0.92);
-      --border: rgba(15, 23, 42, 0.08);
-      --text: #0f172a;
-      --muted: #64748b;
-      --teal: #0d9488;
-      --teal-bright: #10b981;
-      --glow-1: rgba(20, 184, 166, 0.28);
-      --glow-2: rgba(139, 92, 246, 0.24);
-      --shadow: 0 10px 26px rgba(15, 23, 42, 0.07);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-      transition: background 0.25s ease, color 0.25s ease;
-    }
-
-    .hidden { display: none !important; }
-
-    /* Тосты */
-    #toastBox {
-      position: fixed;
-      top: 66px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 900;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: min(92vw, 380px);
-      pointer-events: none;
-    }
-
-    .toast {
-      background: var(--surface-2);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 11px 15px;
-      border-radius: 14px;
-      font-size: 13px;
-      font-weight: 500;
-      box-shadow: var(--shadow);
-    }
-
-    /* Экран входа / регистрации */
-    .auth-screen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background:
-        radial-gradient(circle at 15% 15%, var(--glow-1), transparent 45%),
-        radial-gradient(circle at 85% 85%, var(--glow-2), transparent 45%),
-        var(--bg);
-    }
-
-    .auth-box {
-      width: 100%;
-      max-width: 400px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 24px 20px;
-      box-shadow: var(--shadow);
-    }
-
-    .auth-brand {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .logo-globe {
-      width: 34px;
-      height: 34px;
-      border-radius: 11px;
-      background: linear-gradient(135deg, #2dd4bf, #6366f1);
-      color: #fff;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .brand-word {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-    }
-
-    .seg-tabs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      background: var(--surface-2);
-      padding: 4px;
-      border-radius: 13px;
-      margin-bottom: 16px;
-    }
-
-    .seg-btn {
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      padding: 9px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .seg-btn.active {
-      background: var(--surface);
-      color: var(--text);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    .field {
-      margin-bottom: 12px;
-    }
-
-    .field label {
-      display: block;
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-
-    .field input,
-    .field textarea,
-    .field select {
-      width: 100%;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 11px 13px;
-      font-size: 14px;
-      font-family: inherit;
-      outline: none;
-    }
-
-    .field input:focus,
-    .field textarea:focus,
-    .field select:focus {
-      border-color: var(--teal);
-    }
-
-    .btn-grad {
-      width: 100%;
-      border: none;
-      border-radius: 14px;
-      padding: 12px 16px;
-      background: linear-gradient(90deg, #14b8a6, #6366f1);
-      color: #fff;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .btn-teal {
-      border: none;
-      border-radius: 999px;
-      padding: 8px 16px;
-      background: var(--teal);
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .btn-soft {
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 8px 14px;
-      background: var(--surface-2);
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    /* Основной контейнер */
-    .shell {
-      max-width: 560px;
-      margin: 0 auto;
-      padding-top: 58px;
-      padding-bottom: 86px;
-    }
-
-    /* Верхняя панель */
-    .topbar {
-      position: fixed;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 560px;
-      height: 58px;
-      padding: 0 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background:
-        radial-gradient(circle at 22% 50%, var(--glow-2), transparent 42%),
-        radial-gradient(circle at 75% 50%, var(--glow-1), transparent 42%),
-        var(--header-bg);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border-bottom: 1px solid var(--border);
-      z-index: 200;
-    }
-
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-    }
-
-    .topbar-title {
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-    }
-
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .top-icon-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: none;
-      background: transparent;
-      color: var(--text);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 17px;
-    }
-
-    .top-icon-btn:active {
-      background: var(--surface-2);
-    }
-
-    .top-avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: var(--purple);
-      color: #fff;
-      font-weight: 700;
-      font-size: 13px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    /* Вкладки ленты */
-    .feed-tabs {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      background:
-        linear-gradient(90deg, rgba(139, 92, 246, 0.14), rgba(20, 184, 166, 0.14)),
-        var(--surface);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .feed-tab {
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      padding: 13px 8px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      position: relative;
-    }
-
-    .feed-tab.active {
-      color: var(--teal-bright);
-    }
-
-    .feed-tab.active::after {
-      content: "";
-      position: absolute;
-      left: 16%;
-      right: 16%;
-      bottom: 0;
-      height: 3px;
-      border-radius: 3px 3px 0 0;
-      background: var(--teal-bright);
-    }
-
-    /* Моменты / Сферы сверху */
-    .moments-bar {
-      display: flex;
-      gap: 14px;
-      padding: 14px 14px 12px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg);
-    }
-
-    .moments-bar::-webkit-scrollbar { display: none; }
-
-    .moment-item {
-      flex: 0 0 auto;
-      width: 64px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-    }
-
-    .moment-ring {
-      position: relative;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      padding: 2px;
-      background: linear-gradient(135deg, #2dd4bf, #8b5cf6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .moment-ring.own {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-    }
-
-    .moment-inner {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: var(--purple);
-      color: #fff;
-      font-weight: 700;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .moment-ring.own .moment-inner {
-      background: var(--surface-2);
-      color: var(--muted);
-      font-size: 20px;
-    }
-
-    .moment-plus {
-      position: absolute;
-      right: -1px;
-      bottom: -1px;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: var(--teal);
-      color: #fff;
-      font-size: 14px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid var(--bg);
-    }
-
-    .moment-name {
-      font-size: 11px;
-      color: var(--muted);
-      max-width: 64px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-align: center;
-    }
-
-    /* Строка «Что нового?» */
-    .quick-composer {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .avatar-circle {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: var(--purple);
-      color: #fff;
-      font-weight: 700;
-      font-size: 14px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .avatar-circle.teal { background: var(--teal); }
-    .avatar-circle.blue { background: var(--blue); }
-
-    .quick-input-trigger {
-      flex: 1;
-      text-align: left;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 11px 14px;
-      border-radius: 14px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .quick-photo-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      font-size: 19px;
-      cursor: pointer;
-    }
-
-    /* Карточка поста */
-    .post-card {
-      padding: 16px 14px;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg);
-    }
-
-    .post-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .post-author-wrap {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .post-author-name {
-      font-size: 15px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .verified-dot {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: var(--teal);
-      color: #fff;
-      font-size: 10px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .post-sub {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .post-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .post-text {
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--text);
-      white-space: pre-wrap;
-      word-break: break-word;
-      margin-bottom: 12px;
-    }
-
-    .post-art-card {
-      border-radius: 18px;
-      padding: 24px 18px;
-      min-height: 220px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(125deg, #60a5fa 0%, #818cf8 52%, #c084fc 100%);
-      margin-bottom: 10px;
-    }
-
-    .post-sphere-3d {
-      width: 132px;
-      height: 132px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.92), rgba(147, 197, 253, 0.55) 45%, rgba(129, 140, 248, 0.82) 100%);
-      box-shadow: 0 20px 45px rgba(30, 41, 59, 0.28);
-    }
-
-    .post-actions {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .action-link {
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .action-link.liked { color: var(--danger); }
-    .action-link.del { margin-left: auto; color: var(--danger); }
-
-    /* Экран Обзор */
-    .page-pad {
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .search-box {
-      width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-size: 14px;
-      outline: none;
-    }
-
-    .block-heading {
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 10px;
-    }
-
-    .tags-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .tag-chip {
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .tag-chip.active {
-      background: rgba(20, 184, 166, 0.16);
-      border-color: var(--teal);
-      color: var(--teal-bright);
-    }
-
-    .author-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 12px 14px;
-      margin-bottom: 10px;
-    }
-
-    .author-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-    }
-
-    .author-name { font-size: 15px; font-weight: 700; }
-    .author-handle { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    /* Экран Чаты */
-    .chats-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .active-pill {
-      background: rgba(20, 184, 166, 0.14);
-      color: var(--teal-bright);
-      padding: 5px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .chat-card {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 13px 14px;
-      margin-bottom: 10px;
-      cursor: pointer;
-    }
-
-    .chat-card-main { flex: 1; min-width: 0; }
-    .chat-card-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
-    .chat-card-name { font-size: 15px; font-weight: 700; }
-    .chat-card-time { font-size: 12px; color: var(--muted); }
-    .chat-card-preview { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    .unread-badge {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--teal);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Экран Профиль */
-    .profile-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 18px;
-      margin-bottom: 14px;
-    }
-
-    .profile-top-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .profile-user-box {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .profile-avatar-lg {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #6366f1, #a855f7);
-      color: #fff;
-      font-size: 22px;
-      font-weight: 800;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .profile-name-big {
-      font-size: 18px;
-      font-weight: 800;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .profile-meta-line { font-size: 13px; color: var(--muted); margin-top: 2px; }
-    .profile-bio-text { font-size: 14px; line-height: 1.5; margin-bottom: 16px; }
-
-    .theme-pill-btn {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 14px;
-      padding: 10px 12px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: center;
-      line-height: 1.25;
-    }
-
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      text-align: center;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-    }
-
-    .stat-num { font-size: 17px; font-weight: 800; }
-    .stat-txt { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-    .profile-subtabs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .profile-subtab {
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      padding: 12px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      position: relative;
-    }
-
-    .profile-subtab.active { color: var(--text); }
-    .profile-subtab.active::after {
-      content: "";
-      position: absolute;
-      left: 18%;
-      right: 18%;
-      bottom: 0;
-      height: 3px;
-      background: var(--teal);
-      border-radius: 3px 3px 0 0;
-    }
-
-    /* Нижняя панель навигации */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 560px;
-      height: 68px;
-      padding: 6px 8px;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      align-items: center;
-      background:
-        radial-gradient(circle at 18% 100%, var(--glow-2), transparent 55%),
-        radial-gradient(circle at 82% 100%, var(--glow-1), transparent 55%),
-        var(--nav-bg);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border-top: 1px solid var(--border);
-      z-index: 200;
-    }
-
-    .bnav-btn {
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .bnav-btn.active { color: var(--teal-bright); }
-    .bnav-icon { font-size: 18px; line-height: 1; }
-
-    .bnav-create {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: var(--teal);
-      color: #fff;
-      font-size: 24px;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 6px 18px rgba(20, 184, 166, 0.4);
-    }
-
-    /* Модалки и шторки */
-    .sheet-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.55);
-      backdrop-filter: blur(4px);
-      z-index: 500;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-    }
-
-    .sheet-backdrop.center { align-items: center; padding: 16px; }
-
-    .sheet-card {
-      width: 100%;
-      max-width: 560px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 24px 24px 0 0;
-      padding: 18px 16px 24px;
-      max-height: 85vh;
-      overflow-y: auto;
-    }
-
-    .sheet-backdrop.center .sheet-card {
-      max-width: 420px;
-      border-radius: 22px;
-    }
-
-    .sheet-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 14px;
-    }
-
-    .sheet-title { font-size: 18px; font-weight: 800; }
-    .sheet-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-    .close-x {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      border: none;
-      background: var(--surface-2);
-      color: var(--text);
-      font-size: 15px;
-      cursor: pointer;
-    }
-
-    .composer-grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 12px 0;
-    }
-
-    .tool-tile {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      text-align: center;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-      cursor: pointer;
-    }
-
-    .sheet-bottom-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .comment-item {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 10px;
-    }
-
-    .comment-top {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      margin-bottom: 5px;
-    }
-
-    .comment-author { font-weight: 700; color: var(--text); }
-    .comment-time { color: var(--muted); }
-    .comment-body { font-size: 13px; line-height: 1.45; }
-
-    .comment-form {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .comment-form input {
-      flex: 1;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 999px;
-      padding: 10px 14px;
-      font-size: 13px;
-      outline: none;
-    }
-
-    .empty-msg {
-      text-align: center;
-      color: var(--muted);
-      padding: 28px 14px;
-      font-size: 13px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SFERA — Alfa 1.2 | Одна сфера. Миллион историй.</title>
+    <link rel="icon" type="image/png" href="sfera.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --accent-teal: #16B8A6;
+            --accent-teal-dark: #0D9488;
+            --accent-violet: #8294FF;
+            --accent-violet-deep: #7C6FF6;
+            --accent-sky: #38BDF8;
+            --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        [data-theme="light"] {
+            --bg-outer: #E8E1D5;
+            --bg-app: #F5EFE6;
+            --bg-card: #FFFDF9;
+            --bg-card-subtle: #EDE6DA;
+            --bg-input: #EFE8DD;
+            --bg-glass: rgba(245, 239, 230, 0.82);
+            --bg-sheet: #FFFDF9;
+            --border-subtle: rgba(58, 46, 32, 0.11);
+            --border-card: rgba(58, 46, 32, 0.08);
+            --text-primary: #1F1B16;
+            --text-secondary: #685F54;
+            --text-muted: #9A9083;
+            --shadow-card: 0 3px 16px rgba(58, 46, 32, 0.06);
+            --shadow-sheet: 0 -10px 40px rgba(58, 46, 32, 0.14);
+            --badge-bg: rgba(22, 184, 166, 0.14);
+            --badge-border: rgba(22, 184, 166, 0.45);
+            --badge-text: #0F766E;
+            --glow-opacity: 0.48;
+        }
+
+        [data-theme="dark"] {
+            --bg-outer: #070B12;
+            --bg-app: #0D1520;
+            --bg-card: #15202E;
+            --bg-card-subtle: #1B2838;
+            --bg-input: #1A2636;
+            --bg-glass: rgba(13, 21, 32, 0.74);
+            --bg-sheet: #172231;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-card: rgba(255, 255, 255, 0.06);
+            --text-primary: #F1F5F9;
+            --text-secondary: #8B9BB4;
+            --text-muted: #5C6F8A;
+            --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.25);
+            --shadow-sheet: 0 -12px 44px rgba(0, 0, 0, 0.55);
+            --badge-bg: rgba(56, 189, 248, 0.12);
+            --badge-border: rgba(56, 189, 248, 0.72);
+            --badge-text: #38BDF8;
+            --glow-opacity: 0.42;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-sans);
+            background-color: var(--bg-outer);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: background-color 0.3s var(--ease-smooth), color 0.3s var(--ease-smooth);
+        }
+
+        .phone-shell {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            margin: 0 auto;
+            background-color: var(--bg-app);
+            position: relative;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.16);
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s var(--ease-smooth);
+        }
+
+        .sticky-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            overflow: visible;
+        }
+
+        .glass-header-surface {
+            position: relative;
+            background: var(--bg-glass);
+            backdrop-filter: blur(22px) saturate(165%);
+            -webkit-backdrop-filter: blur(22px) saturate(165%);
+            border-bottom: 1px solid var(--border-subtle);
+            overflow: hidden;
+        }
+
+        .glass-glow-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+            opacity: var(--glow-opacity);
+        }
+
+        .glow-blob-violet {
+            position: absolute;
+            width: 150px;
+            height: 75px;
+            border-radius: 9999px;
+            background: #8B7FF5;
+            filter: blur(26px);
+        }
+
+        .glow-blob-teal {
+            position: absolute;
+            width: 150px;
+            height: 75px;
+            border-radius: 9999px;
+            background: #16B8A6;
+            filter: blur(26px);
+        }
+
+        .glow-blob-sky {
+            position: absolute;
+            width: 140px;
+            height: 70px;
+            border-radius: 9999px;
+            background: #38BDF8;
+            filter: blur(26px);
+        }
+
+        .bottom-nav-wrap {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            z-index: 35;
+        }
+
+        .glass-bottom-bar {
+            position: relative;
+            background: var(--bg-glass);
+            backdrop-filter: blur(24px) saturate(175%);
+            -webkit-backdrop-filter: blur(24px) saturate(175%);
+            border-top: 1px solid var(--border-subtle);
+            overflow: hidden;
+            padding: 8px 6px calc(10px + env(safe-area-inset-bottom, 0px));
+        }
+
+        .sfera-app-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #2DD4BF 0%, #38BDF8 55%, #818CF8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(22, 184, 166, 0.28);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .sfera-app-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .hero-sphere-art {
+            width: 100%;
+            height: 225px;
+            border-radius: 18px;
+            background: linear-gradient(130deg, #3898FF 0%, #6E7FF3 52%, #A864F5 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-sphere-ball {
+            width: 156px;
+            height: 156px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 34% 30%, #FFFFFF 0%, #CBE7FF 22%, #8FB4FA 56%, #9E7DF5 86%, #7C63E6 100%);
+            box-shadow:
+                0 22px 40px rgba(45, 38, 120, 0.25),
+                inset -12px -14px 28px rgba(102, 76, 214, 0.38);
+            animation: sphereFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes sphereFloat {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-5px) scale(1.015); }
+        }
+
+        .username-first-wrap {
+            display: inline-flex;
+            align-items: flex-start;
+            gap: 2px;
+            line-height: 1.2;
+        }
+
+        .badge-first-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7.5px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            line-height: 1;
+            padding: 2px 5px;
+            border-radius: 9999px;
+            background: var(--badge-bg);
+            border: 1px solid var(--badge-border);
+            color: var(--badge-text);
+            transform: translateY(-4px);
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.18s ease;
+        }
+
+        .badge-first-pill:hover {
+            transform: translateY(-5px) scale(1.06);
+        }
+
+        .sfera-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 20px;
+            box-shadow: var(--shadow-card);
+            transition: background-color 0.3s var(--ease-smooth), border-color 0.3s var(--ease-smooth);
+        }
+
+        .sfera-input {
+            width: 100%;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            border-radius: 14px;
+            padding: 11px 14px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease, background-color 0.3s ease;
+        }
+
+        .sfera-input:focus {
+            border-color: var(--accent-teal);
+        }
+
+        .sfera-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .sheet-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(9, 14, 24, 0.52);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 50;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s var(--ease-smooth);
+        }
+
+        .sheet-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .sheet-panel {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--bg-sheet);
+            border-top-left-radius: 28px;
+            border-top-right-radius: 28px;
+            box-shadow: var(--shadow-sheet);
+            border-top: 1px solid var(--border-subtle);
+            transform: translateY(100%);
+            transition: transform 0.32s var(--ease-smooth);
+            max-height: 88vh;
+            overflow-y: auto;
+        }
+
+        .sheet-backdrop.open .sheet-panel {
+            transform: translateY(0);
+        }
+
+        .center-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(9, 14, 24, 0.58);
+            backdrop-filter: blur(6px);
+            z-index: 60;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.22s ease;
+        }
+
+        .center-modal-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        @keyframes pulseOrbit {
+            0% { transform: scale(1); opacity: 0.65; }
+            75% { transform: scale(2); opacity: 0; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        .orbit-dot::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 9999px;
+            border: 1.5px solid currentColor;
+            animation: pulseOrbit 2.4s ease-out infinite;
+        }
+    </style>
 </head>
 <body>
-  <div id="toastBox"></div>
 
-  <!-- АВТОРИЗАЦИЯ -->
-  <main id="authView" class="auth-screen">
-    <div class="auth-box">
-      <div class="auth-brand">
-        <span class="logo-globe">🌐</span>
-        <span class="brand-word">SFERA</span>
-      </div>
+<div class="phone-shell">
 
-      <div class="seg-tabs">
-        <button type="button" class="seg-btn active" id="authTabLogin">Вход</button>
-        <button type="button" class="seg-btn" id="authTabRegister">Регистрация</button>
-      </div>
+    <!-- =========================================================
+         ЭКРАН ВХОДА / РЕГИСТРАЦИИ (БЕЗ КОДОВ, ПОДКЛЮЧЕН К RENDER)
+         ========================================================= -->
+    <section id="authView" class="min-h-screen flex flex-col justify-between p-5 relative overflow-hidden">
+        <div class="pointer-events-none absolute -top-16 -left-16 w-64 h-64 rounded-full blur-3xl opacity-30" style="background: #16B8A6;"></div>
+        <div class="pointer-events-none absolute -bottom-20 -right-16 w-72 h-72 rounded-full blur-3xl opacity-30" style="background: #8294FF;"></div>
 
-      <form id="loginForm">
-        <div class="field">
-          <label for="loginIdent">Email или @username</label>
-          <input type="text" id="loginIdent" placeholder="aimatov или email@example.com" required />
-        </div>
-        <div class="field">
-          <label for="loginPass">Пароль</label>
-          <input type="password" id="loginPass" placeholder="••••••••" required />
-        </div>
-        <button type="submit" class="btn-grad">Войти</button>
-      </form>
-
-      <form id="registerForm" class="hidden">
-        <div class="field">
-          <label for="regName">Имя</label>
-          <input type="text" id="regName" placeholder="Александр" maxlength="50" required />
-        </div>
-        <div class="field">
-          <label for="regUsername">Юзернейм</label>
-          <input type="text" id="regUsername" placeholder="aimatov" maxlength="24" required />
-        </div>
-        <div class="field">
-          <label for="regEmail">Email</label>
-          <input type="email" id="regEmail" placeholder="name@example.com" required />
-        </div>
-        <div class="field">
-          <label for="regPass">Пароль (от 6 символов)</label>
-          <input type="password" id="regPass" placeholder="••••••••" minlength="6" required />
-        </div>
-        <button type="submit" class="btn-grad">Создать аккаунт</button>
-      </form>
-    </div>
-  </main>
-
-  <!-- ПРИЛОЖЕНИЕ -->
-  <div id="appView" class="shell hidden">
-    <header class="topbar">
-      <div class="topbar-left" id="goHomeTop">
-        <span class="logo-globe" style="width:28px;height:28px;font-size:15px;border-radius:9px;">🌐</span>
-        <span class="topbar-title">SFERA</span>
-      </div>
-      <div class="topbar-right">
-        <button type="button" class="top-icon-btn" id="topSearchBtn" title="Поиск">🔍</button>
-        <button type="button" class="top-icon-btn" id="topThemeBtn" title="Тема">☀️</button>
-        <button type="button" class="top-icon-btn" id="topBellBtn" title="Уведомления">🔔</button>
-        <span class="top-avatar" id="topAvatarBtn" title="Профиль">A</span>
-      </div>
-    </header>
-
-    <!-- ГЛАВНАЯ (ЛЕНТА) -->
-    <section id="tab-home">
-      <div class="feed-tabs">
-        <button type="button" class="feed-tab active" data-feed-mode="for_you">Для вас</button>
-        <button type="button" class="feed-tab" data-feed-mode="following">Подписки</button>
-        <button type="button" class="feed-tab" data-feed-mode="popular">Популярное</button>
-      </div>
-
-      <div class="moments-bar" id="momentsBar"></div>
-
-      <div class="quick-composer">
-        <span class="avatar-circle teal" id="quickAvatar">A</span>
-        <button type="button" class="quick-input-trigger" id="openComposerFromQuick">Что нового?</button>
-        <button type="button" class="quick-photo-btn" id="openComposerPhotoBtn" title="Добавить фото">🖼️</button>
-      </div>
-
-      <div id="homeFeedList"></div>
-    </section>
-
-    <!-- ОБЗОР -->
-    <section id="tab-explore" class="page-pad hidden">
-      <input type="text" class="search-box" id="exploreSearch" placeholder="🔍 Поиск людей, сообществ и тем..." />
-
-      <div>
-        <div class="block-heading">Актуальные темы</div>
-        <div class="tags-wrap" id="trendingTags">
-          <button type="button" class="tag-chip active" data-tag="">Все</button>
-          <button type="button" class="tag-chip" data-tag="#SferaOS">#SferaOS</button>
-          <button type="button" class="tag-chip" data-tag="#Технологии">#Технологии</button>
-          <button type="button" class="tag-chip" data-tag="#Дизайн">#Дизайн</button>
-          <button type="button" class="tag-chip" data-tag="#Шахматы">#Шахматы</button>
-          <button type="button" class="tag-chip" data-tag="#Музыка">#Музыка</button>
-        </div>
-      </div>
-
-      <div>
-        <div class="block-heading">Рекомендуемые авторы</div>
-        <div id="recommendedAuthors"></div>
-      </div>
-
-      <div>
-        <div class="block-heading">Популярные обсуждения</div>
-        <div id="explorePostsList"></div>
-      </div>
-    </section>
-
-    <!-- ЧАТЫ -->
-    <section id="tab-chats" class="page-pad hidden">
-      <div class="chats-head">
-        <h2 class="block-heading" style="margin:0;">Сообщения</h2>
-        <span class="active-pill" id="activeChatsCount">3 активных</span>
-      </div>
-      <div id="dialogsList"></div>
-    </section>
-
-    <!-- ПРОФИЛЬ -->
-    <section id="tab-profile" class="hidden">
-      <div class="page-pad" style="padding-bottom:8px;">
-        <div class="profile-card">
-          <div class="profile-top-row">
-            <div class="profile-user-box">
-              <span class="profile-avatar-lg" id="profAvatarLg">A</span>
-              <div>
-                <div class="profile-name-big">
-                  <span id="profName">Александр</span>
-                  <span class="verified-dot">✓</span>
+        <div class="flex items-center justify-between relative z-10">
+            <div class="flex items-center gap-2.5">
+                <div class="sfera-app-icon">
+                    <img src="sfera.png" alt="SFERA" onerror="this.outerHTML='<svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2.1&quot;><circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;9&quot;/><line x1=&quot;3&quot; y1=&quot;12&quot; x2=&quot;21&quot; y2=&quot;12&quot;/><path d=&quot;M12 3a14.5 14.5 0 0 0 0 18 14.5 14.5 0 0 0 0-18&quot;/></svg>'">
                 </div>
-                <div class="profile-meta-line" id="profHandle">@alex_sfera · Каменск-Уральский</div>
-              </div>
+                <span class="font-extrabold text-lg tracking-tight">SFERA</span>
+                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full" style="background: var(--bg-card-subtle); color: var(--text-secondary);">Alfa 1.2</span>
             </div>
-            <button type="button" class="theme-pill-btn" id="profThemeBtn">
-              <div id="profThemeIcon">☀️</div>
-              <div id="profThemeLabel">Тёмная тема</div>
+            <button onclick="toggleTheme()" class="w-9 h-9 rounded-full flex items-center justify-center" style="background: var(--bg-card); border: 1px solid var(--border-subtle);" title="Сменить тему">
+                <span class="theme-icon-slot"></span>
             </button>
-          </div>
-
-          <p class="profile-bio-text" id="profBio">
-            Создаю социальную сеть нового поколения SFERA — «Одна сфера. Миллионы историй.» Минимализм, технологии и живое общение.
-          </p>
-
-          <div style="display:flex;gap:8px;margin-bottom:14px;">
-            <button type="button" class="btn-soft" id="editBioBtn" style="flex:1;">Редактировать био</button>
-            <button type="button" class="btn-soft" id="logoutAppBtn">Выйти</button>
-          </div>
-
-          <div class="stats-row">
-            <div>
-              <div class="stat-num" id="profPostsCount">0</div>
-              <div class="stat-txt">Публикации</div>
-            </div>
-            <div>
-              <div class="stat-num" id="profFollowersCount">12.4K</div>
-              <div class="stat-txt">Подписчики</div>
-            </div>
-            <div>
-              <div class="stat-num" id="profFollowingCount">184</div>
-              <div class="stat-txt">Подписки</div>
-            </div>
-          </div>
         </div>
-      </div>
 
-      <div class="profile-subtabs">
-        <button type="button" class="profile-subtab active" data-ptab="posts">Публикации</button>
-        <button type="button" class="profile-subtab" data-ptab="saved">Сохранённое (<span id="savedCount">0</span>)</button>
-      </div>
+        <div class="sfera-card p-6 my-auto relative z-10">
+            <img src="sfera.png" alt="SFERA" class="w-16 h-16 mx-auto mb-3 rounded-2xl object-cover shadow-lg" onerror="this.outerHTML='<div class=&quot;w-16 h-16 mx-auto mb-3 rounded-full shadow-lg&quot; style=&quot;background: radial-gradient(circle at 34% 30%, #FFFFFF 0%, #CBE7FF 24%, #8FB4FA 58%, #9E7DF5 88%);&quot;></div>'">
+            <h1 class="text-xl font-extrabold text-center tracking-tight">Добро пожаловать в SFERA</h1>
+            <p class="text-xs text-center mt-1 mb-5" style="color: var(--text-secondary);">Одна сфера. Миллион историй.</p>
 
-      <div id="profileTabContent"></div>
+            <div id="authTabsBox" class="p-1 rounded-2xl grid grid-cols-2 gap-1 mb-4" style="background: var(--bg-card-subtle);">
+                <button id="btnTabLogin" onclick="setAuthTab('login')" class="py-2 rounded-xl text-xs font-bold transition">Вход</button>
+                <button id="btnTabReg" onclick="setAuthTab('register')" class="py-2 rounded-xl text-xs font-bold transition">Регистрация</button>
+            </div>
+
+            <!-- Форма Входа -->
+            <div id="formLogin" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Почта или @username</label>
+                    <input id="loginUser" type="text" class="sfera-input" placeholder="aimatov или email@example.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Пароль</label>
+                    <input id="loginPass" type="password" class="sfera-input" placeholder="Введите пароль" onkeydown="if(event.key==='Enter') submitLogin()">
+                </div>
+                <div id="loginErr" class="text-xs text-rose-500 font-medium min-h-[16px]"></div>
+                <button id="btnSubmitLogin" onclick="submitLogin()" class="w-full py-3 rounded-full text-sm font-bold text-white transition active:scale-[0.99]" style="background: var(--accent-teal);">
+                    Войти в SFERA
+                </button>
+            </div>
+
+            <!-- Открытая регистрация -->
+            <div id="formReg1" class="hidden space-y-3">
+                <div>
+                    <label class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Уникальный @username</label>
+                    <input id="regUser" type="text" class="sfera-input" placeholder="aimatov" oninput="checkUsernameAvailability()">
+                    <div id="regUserStatus" class="text-[11px] font-medium mt-1 min-h-[16px]"></div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Имя</label>
+                    <input id="regName" type="text" class="sfera-input" placeholder="Александр">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Email</label>
+                    <input id="regEmail" type="email" class="sfera-input" placeholder="name@example.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Пароль</label>
+                    <input id="regPass" type="password" class="sfera-input" placeholder="Минимум 6 символов" onkeydown="if(event.key==='Enter') submitRegister()">
+                </div>
+                <div id="regErr1" class="text-xs text-rose-500 font-medium min-h-[16px]"></div>
+                <button id="btnSubmitReg" onclick="submitRegister()" class="w-full py-3 rounded-full text-sm font-bold text-white transition active:scale-[0.99]" style="background: var(--accent-teal);">
+                    Создать аккаунт
+                </button>
+            </div>
+        </div>
+
+        <div class="text-center text-[11px]" style="color: var(--text-muted);">
+            SFERA Alfa 1.2 • Aimatov Silver Group
+        </div>
     </section>
 
-    <!-- НИЖНЯЯ НАВИГАЦИЯ -->
-    <nav class="bottom-nav">
-      <button type="button" class="bnav-btn active" data-nav="tab-home">
-        <span class="bnav-icon">🏠</span>
-        <span>Главная</span>
-      </button>
-      <button type="button" class="bnav-btn" data-nav="tab-explore">
-        <span class="bnav-icon">🧭</span>
-        <span>Обзор</span>
-      </button>
-      <button type="button" class="bnav-btn" id="navCreateBtn">
-        <span class="bnav-create">+</span>
-        <span>Создать</span>
-      </button>
-      <button type="button" class="bnav-btn" data-nav="tab-chats">
-        <span class="bnav-icon">💬</span>
-        <span>Чаты</span>
-      </button>
-      <button type="button" class="bnav-btn" data-nav="tab-profile">
-        <span class="bnav-icon">👤</span>
-        <span>Профиль</span>
-      </button>
-    </nav>
-  </div>
+    <!-- =========================================================
+         ОСНОВНОЕ ПРИЛОЖЕНИЕ SFERA
+         ========================================================= -->
+    <div id="mainAppView" class="hidden flex-1 flex flex-col">
 
-  <!-- МОДАЛКА: НОВАЯ ПУБЛИКАЦИЯ -->
-  <div id="composerModal" class="sheet-backdrop hidden">
-    <div class="sheet-card">
-      <div class="sheet-head">
-        <div>
-          <div class="sheet-title">Новая публикация</div>
-          <div class="sheet-sub">Поделитесь тем, что у вас происходит</div>
-        </div>
-        <button type="button" class="close-x" id="closeComposerBtn">✕</button>
-      </div>
+        <header class="sticky-topbar">
+            <div class="glass-header-surface">
+                <div class="glass-glow-layer">
+                    <div class="glow-blob-violet" style="top: -18px; left: 32%;"></div>
+                    <div class="glow-blob-teal" style="top: -12px; right: 16%;"></div>
+                    <div class="glow-blob-sky" style="bottom: -24px; left: 10%;"></div>
+                </div>
 
-      <div class="field">
-        <textarea id="composerTextarea" rows="4" placeholder="О чём хотите рассказать?" maxlength="1000"></textarea>
-      </div>
+                <div class="relative z-10 px-4 py-2.5 flex items-center justify-between">
+                    <div class="flex items-center gap-2.5 cursor-pointer" onclick="switchTab('home')">
+                        <div class="sfera-app-icon">
+                            <img src="sfera.png" alt="SFERA" onerror="this.outerHTML='<svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2.1&quot;><circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;9&quot;/><line x1=&quot;3&quot; y1=&quot;12&quot; x2=&quot;21&quot; y2=&quot;12&quot;/><path d=&quot;M12 3a14.5 14.5 0 0 0 0 18 14.5 14.5 0 0 0 0-18&quot;/></svg>'">
+                        </div>
+                        <span class="font-extrabold text-[18px] tracking-tight">SFERA</span>
+                        <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full" style="background: var(--bg-card-subtle); color: var(--text-secondary);">Alfa 1.2</span>
+                    </div>
 
-      <div class="composer-grid-2">
-        <button type="button" class="tool-tile" id="toolPhoto">🖼️ Фото</button>
-        <button type="button" class="tool-tile" id="toolVideo">🎥 Видео</button>
-        <button type="button" class="tool-tile" id="toolPoll">📊 Опрос</button>
-        <button type="button" class="tool-tile" id="toolGeo">📍 Местоположение</button>
-      </div>
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="switchTab('explore', true)" class="w-9 h-9 rounded-full flex items-center justify-center transition hover:bg-black/5 dark:hover:bg-white/5" title="Поиск">
+                            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16.35" y2="16.35"/></svg>
+                        </button>
 
-      <div class="sheet-bottom-bar">
-        <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);">
-          <span>Аудитория:</span>
-          <select id="composerAudience" class="field" style="margin:0;width:auto;padding:7px 10px;">
-            <option value="Все">Все</option>
-            <option value="Подписчики">Подписчики</option>
-          </select>
-        </div>
-        <button type="button" class="btn-teal" id="submitComposerBtn">Опубликовать</button>
-      </div>
+                        <button onclick="toggleTheme()" class="w-9 h-9 rounded-full flex items-center justify-center transition hover:bg-black/5 dark:hover:bg-white/5" title="Переключить тему">
+                            <span class="theme-icon-slot"></span>
+                        </button>
+
+                        <div class="relative">
+                            <button onclick="toggleNotifSheet()" class="w-9 h-9 rounded-full flex items-center justify-center transition hover:bg-black/5 dark:hover:bg-white/5 relative" title="Уведомления">
+                                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                                <span id="notifDot" class="absolute top-2 right-2 w-2 h-2 rounded-full" style="background: var(--accent-teal);"></span>
+                            </button>
+                        </div>
+
+                        <button onclick="switchTab('profile')" class="w-9 h-9 rounded-full flex items-center justify-center text-white shadow-sm transition active:scale-95" style="background: var(--accent-violet);" title="Профиль">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="homeFeedTabsBar" class="relative z-10 grid grid-cols-3 text-center pt-1">
+                    <button onclick="setFeedSubTab('for_you')" data-ftab="for_you" class="feed-subtab py-2.5 text-[13px] font-semibold relative transition">
+                        <span>Для вас</span>
+                        <span class="tab-underline absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-[2.5px] rounded-full transition-opacity" style="background: var(--accent-teal);"></span>
+                    </button>
+                    <button onclick="setFeedSubTab('following')" data-ftab="following" class="feed-subtab py-2.5 text-[13px] font-semibold relative transition">
+                        <span>Подписки</span>
+                        <span class="tab-underline hidden absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-[2.5px] rounded-full transition-opacity" style="background: var(--accent-teal);"></span>
+                    </button>
+                    <button onclick="setFeedSubTab('popular')" data-ftab="popular" class="feed-subtab py-2.5 text-[13px] font-semibold relative transition">
+                        <span>Популярное</span>
+                        <span class="tab-underline hidden absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-[2.5px] rounded-full transition-opacity" style="background: var(--accent-teal);"></span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 pb-24">
+
+            <!-- 1. ГЛАВНАЯ -->
+            <section id="tab-home" class="page-tab">
+                <div class="px-4 py-3.5 border-b flex items-center gap-3.5 overflow-x-auto no-scrollbar" style="border-color: var(--border-subtle);" id="spheresStoryBar"></div>
+
+                <div class="px-4 py-3 border-b flex items-center gap-3" style="border-color: var(--border-subtle);">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white shrink-0" style="background: var(--accent-teal);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <button onclick="openCreateSheet('post')" class="flex-1 text-left px-4 py-2.5 rounded-full text-[13px] transition" style="background: var(--bg-input); color: var(--text-secondary);">
+                        Что нового?
+                    </button>
+                    <button onclick="openCreateSheet('sphere')" class="w-9 h-9 rounded-xl flex items-center justify-center transition" style="color: var(--text-secondary);" title="Создать Сферу или фото">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </button>
+                </div>
+
+                <div id="feedCardsList" class="p-3.5 space-y-3.5"></div>
+            </section>
+
+            <!-- 2. ОБЗОР -->
+            <section id="tab-explore" class="page-tab hidden p-4 space-y-5">
+                <div class="relative">
+                    <svg class="absolute left-3.5 top-1/2 -translate-y-1/2" style="color: var(--text-secondary);" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16.35" y2="16.35"/></svg>
+                    <input id="exploreSearchInput" type="text" class="sfera-input pl-10 rounded-2xl" placeholder="Поиск людей, сообществ и тем..." oninput="renderExplorePage()">
+                </div>
+
+                <div>
+                    <h3 class="text-[15px] font-bold mb-2.5">Актуальные темы</h3>
+                    <div id="trendingTagsRow" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <div class="sfera-card p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div>
+                            <h3 class="text-sm font-bold">Орбиты Сфер • Живой пульс</h3>
+                            <p class="text-[11px]" style="color: var(--text-secondary);">Нажмите на пульсирующую Сферу, чтобы добавить свой момент</p>
+                        </div>
+                        <span class="text-[10px] font-bold px-2.5 py-1 rounded-full" style="background: rgba(22, 184, 166, 0.14); color: var(--accent-teal);">24ч</span>
+                    </div>
+                    <div class="relative w-full h-[210px] rounded-2xl overflow-hidden flex items-center justify-center my-2" style="background: var(--bg-card-subtle);">
+                        <div class="pointer-events-none absolute w-[88px] h-[88px] rounded-full border" style="border-color: var(--border-subtle);"></div>
+                        <div class="pointer-events-none absolute w-[156px] h-[156px] rounded-full border" style="border-color: var(--border-subtle);"></div>
+                        <div class="pointer-events-none absolute w-[224px] h-[224px] rounded-full border border-dashed" style="border-color: var(--border-subtle);"></div>
+                        <div class="pointer-events-none w-8 h-8 rounded-full" style="background: radial-gradient(circle at 35% 30%, #fff, #38BDF8 45%, #8294FF 100%);"></div>
+                        <div id="orbitMapNodes" class="absolute inset-0"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-[15px] font-bold mb-2.5">Рекомендуемые авторы</h3>
+                    <div id="recommendedAuthorsList" class="space-y-2.5"></div>
+                </div>
+            </section>
+
+            <!-- 3. ЧАТЫ -->
+            <section id="tab-chats" class="page-tab hidden p-4">
+                <div id="chatsListContainer">
+                    <div class="flex items-center justify-between mb-3.5">
+                        <h2 class="text-xl font-extrabold tracking-tight">Сообщения</h2>
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(22, 184, 166, 0.14); color: var(--accent-teal);">3 активных</span>
+                    </div>
+                    <div id="chatThreadsList" class="space-y-2.5"></div>
+                </div>
+
+                <div id="chatRoomContainer" class="hidden sfera-card overflow-hidden flex flex-col" style="min-height: 68vh;">
+                    <div class="p-3.5 border-b flex items-center justify-between gap-2" style="border-color: var(--border-subtle);">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <button onclick="closeChatRoom()" class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background: var(--bg-card-subtle);">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+                            </button>
+                            <div id="chatRoomAvatar" class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white shrink-0"></div>
+                            <div class="min-w-0">
+                                <div id="chatRoomName" class="text-sm font-bold truncate"></div>
+                                <div id="chatRoomSub" class="text-[11px]" style="color: var(--text-secondary);">В сети</div>
+                            </div>
+                        </div>
+
+                        <button id="e2eeToggleBtn" onclick="toggleChatE2EE()" class="px-3 py-1.5 rounded-full text-[11px] font-bold flex items-center gap-1.5 border transition shrink-0">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <span id="e2eeBtnText">E2EE: ВЫКЛ</span>
+                        </button>
+                    </div>
+
+                    <div id="e2eeStatusBanner" class="hidden px-3.5 py-2 text-[11px] font-medium border-b" style="background: rgba(22, 184, 166, 0.12); border-color: rgba(22, 184, 166, 0.25); color: var(--accent-teal);">
+                        Защищённый чат (E2EE) включён. Сообщения шифруются на устройстве (AES-GCM).
+                    </div>
+
+                    <div id="chatRoomMessages" class="flex-1 p-3.5 space-y-2.5 overflow-y-auto no-scrollbar"></div>
+
+                    <div class="p-3 border-t flex items-center gap-2" style="border-color: var(--border-subtle);">
+                        <input id="chatMsgInput" type="text" class="sfera-input py-2.5 text-xs sm:text-sm" placeholder="Написать сообщение..." onkeydown="if(event.key==='Enter') sendRoomMessage()">
+                        <button onclick="sendRoomMessage()" class="px-4 py-2.5 rounded-full text-xs font-bold text-white shrink-0" style="background: var(--accent-teal);">
+                            Отправить
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. ПРОФИЛЬ -->
+            <section id="tab-profile" class="page-tab hidden p-4 space-y-4">
+                <div class="sfera-card p-5">
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3.5">
+                            <div id="profAvatar" class="w-16 h-20 rounded-[28px] flex items-center justify-center text-2xl font-extrabold text-white shrink-0 shadow-sm" style="background: var(--accent-violet);">А</div>
+                            <div>
+                                <h2 id="profDisplayName" class="text-lg font-extrabold leading-tight">Александр</h2>
+                                <div id="profUsernameRow" class="mt-1"></div>
+                                <div class="text-xs mt-1" style="color: var(--text-secondary);">Каменск-Уральский</div>
+                            </div>
+                        </div>
+
+                        <button onclick="toggleTheme()" class="px-3 py-2 rounded-2xl text-[11px] font-semibold flex items-center gap-1.5 border shrink-0 transition" style="background: var(--bg-card-subtle); border-color: var(--border-subtle);">
+                            <span class="w-2.5 h-2.5 rounded-full border-2" style="border-color: var(--accent-teal);"></span>
+                            <span id="profThemeText">Светлая тема</span>
+                        </button>
+                    </div>
+
+                    <p id="profBioText" class="text-[13px] leading-relaxed mb-4" style="color: var(--text-primary);">
+                        Создаю социальную сеть нового поколения SFERA — «Одна сфера. Миллион историй.» Минимализм, технологии и живое общение.
+                    </p>
+
+                    <div class="grid grid-cols-3 text-center pt-3 border-t" style="border-color: var(--border-subtle);">
+                        <div>
+                            <div id="profPostsCount" class="text-base font-extrabold">0</div>
+                            <div class="text-[11px]" style="color: var(--text-secondary);">Публикации</div>
+                        </div>
+                        <div>
+                            <div id="profFollowersCount" class="text-base font-extrabold">12.4K</div>
+                            <div class="text-[11px]" style="color: var(--text-secondary);">Подписчики</div>
+                        </div>
+                        <div>
+                            <div id="profFollowingCount" class="text-base font-extrabold">184</div>
+                            <div class="text-[11px]" style="color: var(--text-secondary);">Подписки</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sfera-card p-4 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold">Управление аккаунтом</span>
+                        <button onclick="logoutAccount()" class="text-[11px] font-semibold text-rose-500">Выйти из аккаунта</button>
+                    </div>
+                    <p class="text-[11px] leading-relaxed" style="color: var(--text-secondary);">
+                        Капсула <strong style="color: var(--text-primary);">FIRST</strong> над юзернеймом выдаётся при 1 000 000+ подписчиков или одобрении поддержки @support.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="simulate1MFollowers()" class="px-3 py-1.5 rounded-full text-[11px] font-semibold" style="background: var(--bg-card-subtle);">Проверить 1M+ подписчиков</button>
+                        <button onclick="simulateSupportVerify()" class="px-3 py-1.5 rounded-full text-[11px] font-semibold" style="background: var(--bg-card-subtle);">Одобрить через @support</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 text-center border-b" style="border-color: var(--border-subtle);">
+                    <button onclick="setProfileSubTab('posts')" data-ptab="posts" class="prof-subtab py-2.5 text-xs font-bold relative">
+                        <span>Публикации</span>
+                        <span class="ptab-line absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-[2.5px] rounded-full" style="background: var(--accent-teal);"></span>
+                    </button>
+                    <button onclick="setProfileSubTab('memories')" data-ptab="memories" class="prof-subtab py-2.5 text-xs font-bold relative">
+                        <span>Воспоминания</span>
+                        <span class="ptab-line hidden absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-[2.5px] rounded-full" style="background: var(--accent-teal);"></span>
+                    </button>
+                    <button onclick="setProfileSubTab('saved')" data-ptab="saved" class="prof-subtab py-2.5 text-xs font-bold relative">
+                        <span>Сохранённое</span>
+                        <span class="ptab-line hidden absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-[2.5px] rounded-full" style="background: var(--accent-teal);"></span>
+                    </button>
+                </div>
+
+                <div id="profileSubContent" class="space-y-3"></div>
+            </section>
+
+        </main>
+
+        <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ -->
+        <nav class="bottom-nav-wrap">
+            <div class="glass-bottom-bar">
+                <div class="glass-glow-layer">
+                    <div class="glow-blob-violet" style="bottom: -18px; left: 4%;"></div>
+                    <div class="glow-blob-sky" style="bottom: -14px; left: 36%;"></div>
+                    <div class="glow-blob-violet" style="bottom: -18px; right: 4%;"></div>
+                </div>
+
+                <div class="relative z-10 grid grid-cols-5 items-center text-center">
+                    <button onclick="switchTab('home')" data-nav="home" class="bottom-nav-btn flex flex-col items-center gap-1 py-1 transition">
+                        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        <span class="text-[10px] font-semibold">Главная</span>
+                    </button>
+
+                    <button onclick="switchTab('explore')" data-nav="explore" class="bottom-nav-btn flex flex-col items-center gap-1 py-1 transition">
+                        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                        <span class="text-[10px] font-semibold">Обзор</span>
+                    </button>
+
+                    <button onclick="openCreateSheet('post')" class="flex flex-col items-center gap-1 py-0.5">
+                        <div class="w-11 h-11 rounded-full flex items-center justify-center border-2 transition active:scale-95" style="border-color: var(--accent-teal); background: rgba(22, 184, 166, 0.14); color: var(--accent-teal);">
+                            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </div>
+                        <span class="text-[10px] font-semibold" style="color: var(--text-secondary);">Создать</span>
+                    </button>
+
+                    <button onclick="switchTab('chats')" data-nav="chats" class="bottom-nav-btn flex flex-col items-center gap-1 py-1 transition relative">
+                        <div class="relative">
+                            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full" style="background: #38BDF8;"></span>
+                        </div>
+                        <span class="text-[10px] font-semibold">Чаты</span>
+                    </button>
+
+                    <button onclick="switchTab('profile')" data-nav="profile" class="bottom-nav-btn flex flex-col items-center gap-1 py-1 transition">
+                        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <span class="text-[10px] font-semibold">Профиль</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
     </div>
-  </div>
 
-  <!-- МОДАЛКА: КОММЕНТАРИИ -->
-  <div id="commentsModal" class="sheet-backdrop hidden">
-    <div class="sheet-card">
-      <div class="sheet-head">
-        <div class="sheet-title">Комментарии</div>
-        <button type="button" class="close-x" id="closeCommentsBtn">✕</button>
-      </div>
-      <div id="commentsList"></div>
-      <form class="comment-form" id="commentForm">
-        <input type="text" id="commentInput" placeholder="Написать комментарий..." autocomplete="off" />
-        <button type="submit" class="btn-teal">Отправить</button>
-      </form>
-    </div>
-  </div>
+</div>
 
-  <!-- МОДАЛКА: РЕДАКТИРОВАНИЕ БИО -->
-  <div id="bioModal" class="sheet-backdrop center hidden">
-    <div class="sheet-card">
-      <div class="sheet-head">
-        <div class="sheet-title">Профиль</div>
-        <button type="button" class="close-x" id="closeBioBtn">✕</button>
-      </div>
-      <form id="bioForm">
-        <div class="field">
-          <label for="bioNameInput">Имя</label>
-          <input type="text" id="bioNameInput" maxlength="50" required />
+<!-- ШТОРКА 1: «НОВАЯ ПУБЛИКАЦИЯ» -->
+<div id="createSheet" class="sheet-backdrop" onclick="if(event.target===this) closeSheet('createSheet')">
+    <div class="sheet-panel p-5 pb-7">
+        <div class="flex items-start justify-between mb-1">
+            <div>
+                <h3 class="text-lg font-extrabold">Новая публикация</h3>
+                <p class="text-xs mt-0.5" style="color: var(--text-secondary);">Поделитесь тем, что у вас происходит</p>
+            </div>
+            <button onclick="closeSheet('createSheet')" class="w-9 h-9 rounded-full flex items-center justify-center" style="background: var(--bg-card-subtle); color: var(--text-secondary);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
         </div>
-        <div class="field">
-          <label for="bioTextInput">О себе</label>
-          <textarea id="bioTextInput" rows="3" maxlength="200"></textarea>
+
+        <textarea id="createTextarea" rows="4" class="sfera-input mt-3.5 mb-3.5 resize-none" placeholder="О чём хотите рассказать?"></textarea>
+
+        <div id="sphereExtraFields" class="hidden mb-3.5 p-3 rounded-2xl space-y-2.5" style="background: var(--bg-card-subtle);">
+            <div>
+                <label class="block text-[11px] font-semibold mb-1" style="color: var(--text-secondary);">Название Активной Сферы (24ч)</label>
+                <input id="sphereTopicInput" type="text" class="sfera-input py-2 text-xs" placeholder="Например: Сфера дня — что сейчас на экране?">
+            </div>
         </div>
-        <button type="submit" class="btn-teal" style="width:100%;">Сохранить</button>
-      </form>
+
+        <div class="grid grid-cols-2 gap-2.5 mb-4" id="createModeGrid">
+            <button type="button" onclick="selectCreateMode('post')" data-cmode="post" class="create-mode-pill px-3.5 py-2.5 rounded-2xl text-xs font-semibold flex items-center gap-2.5 border transition">
+                <svg style="color: var(--accent-teal);" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Фото / Пост</span>
+            </button>
+
+            <button type="button" onclick="selectCreateMode('video')" data-cmode="video" class="create-mode-pill px-3.5 py-2.5 rounded-2xl text-xs font-semibold flex items-center gap-2.5 border transition">
+                <svg style="color: #38BDF8;" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                <span>Видео 9:16</span>
+            </button>
+
+            <button type="button" onclick="selectCreateMode('sphere')" data-cmode="sphere" class="create-mode-pill px-3.5 py-2.5 rounded-2xl text-xs font-semibold flex items-center gap-2.5 border transition">
+                <svg style="color: var(--accent-violet);" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                <span>Сфера 24ч</span>
+            </button>
+
+            <button type="button" onclick="selectCreateMode('poll')" data-cmode="poll" class="create-mode-pill px-3.5 py-2.5 rounded-2xl text-xs font-semibold flex items-center gap-2.5 border transition">
+                <svg style="color: var(--accent-teal);" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span>Опрос</span>
+            </button>
+        </div>
+
+        <div class="pt-3 border-t flex items-center justify-between gap-3" style="border-color: var(--border-subtle);">
+            <div class="flex items-center gap-1.5 text-xs">
+                <span style="color: var(--text-secondary);">Аудитория:</span>
+                <select id="createAudienceSelect" class="font-bold bg-transparent outline-none cursor-pointer" style="color: var(--text-primary);">
+                    <option value="Публично">Все</option>
+                    <option value="Подписчики">Подписчики</option>
+                    <option value="По приглашению">По приглашению</option>
+                </select>
+            </div>
+            <button id="btnPublishSubmit" onclick="submitNewPost()" class="px-6 py-2.5 rounded-full text-xs font-bold text-white shadow-sm transition active:scale-95" style="background: var(--accent-teal);">
+                Опубликовать
+            </button>
+        </div>
     </div>
-  </div>
+</div>
 
-  <script>
-    // Впиши сюда свой актуальный URL сервиса Render (без слеша на конце)
-    const API_BASE = "https://sfera-server.onrender.com";
+<!-- ШТОРКА 2: «КОММЕНТАРИИ» -->
+<div id="commentsSheet" class="sheet-backdrop" onclick="if(event.target===this) closeSheet('commentsSheet')">
+    <div class="sheet-panel p-5 pb-7">
+        <div class="flex items-center justify-between mb-3.5">
+            <h3 class="text-base font-extrabold">Комментарии</h3>
+            <button onclick="closeSheet('commentsSheet')" class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--bg-card-subtle); color: var(--text-secondary);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
 
-    let token = localStorage.getItem("sfera_token") || "";
-    let currentUser = null;
-    let postsCache = [];
-    let feedMode = "for_you";
-    let activeTag = "";
-    let searchQuery = "";
-    let profileSubtab = "posts";
-    let activeCommentPostId = null;
+        <div id="commentsSheetList" class="space-y-2.5 max-h-[46vh] overflow-y-auto no-scrollbar mb-4"></div>
 
-    let savedIds = JSON.parse(localStorage.getItem("sfera_saved_ids") || "[]");
-    let followedHandles = JSON.parse(localStorage.getItem("sfera_followed") || '["@mira_ui"]');
-    let commentsStore = JSON.parse(localStorage.getItem("sfera_comments") || "{}").constructor === Object
-      ? JSON.parse(localStorage.getItem("sfera_comments") || "{}")
-      : {};
+        <div class="flex items-center gap-2 pt-2 border-t" style="border-color: var(--border-subtle);">
+            <input id="newCommentInput" type="text" class="sfera-input rounded-full py-2.5 text-xs" placeholder="Написать комментарий..." onkeydown="if(event.key==='Enter') postNewComment()">
+            <button onclick="postNewComment()" class="px-5 py-2.5 rounded-full text-xs font-bold text-white shrink-0" style="background: var(--accent-teal);">
+                Отправить
+            </button>
+        </div>
+    </div>
+</div>
 
-    const DEMO_DIALOGS = [
-      { initials: "СМ", color: "teal", name: "Сёма", time: "19:24", preview: "Дизайн Sfera просто огонь! Когда ...", unread: 2 },
-      { initials: "НС", color: "blue", name: "Настя", time: "18:10", preview: "Отправила новые фото для ленты 📷", unread: 0 },
-      { initials: "SF", color: "", name: "Команда SFERA", time: "Вчера", preview: "Александр: Утвердили 5 кнопок нижней...", unread: 0 }
-    ];
+<!-- ШТОРКА 3: АКТИВНАЯ СФЕРА 24Ч -->
+<div id="sphereDetailSheet" class="sheet-backdrop" onclick="if(event.target===this) closeSheet('sphereDetailSheet')">
+    <div class="sheet-panel p-5 pb-7">
+        <div class="flex items-start justify-between gap-2 mb-2">
+            <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider" style="color: var(--accent-teal);">Активная Сфера • 24ч</span>
+                <h3 id="sdTitle" class="text-base font-extrabold mt-0.5">Сфера дня</h3>
+                <p id="sdSub" class="text-[11px]" style="color: var(--text-secondary);"></p>
+            </div>
+            <button onclick="closeSheet('sphereDetailSheet')" class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background: var(--bg-card-subtle);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
 
-    const DEMO_AUTHORS = [
-      { initials: "СЁ", color: "teal", name: "Сёма", handle: "@sema_dev · Разраб..." },
-      { initials: "MI", color: "", name: "Mira", handle: "@mira_ui · Продуктовы..." },
-      { initials: "БЕ", color: "blue", name: "Бега", handle: "@bega_chess · Блиц..." }
-    ];
+        <div id="sdContributionsList" class="space-y-2 max-h-[36vh] overflow-y-auto no-scrollbar my-3"></div>
 
-    const $ = (id) => document.getElementById(id);
+        <div class="flex items-center gap-2 pt-2 border-t" style="border-color: var(--border-subtle);">
+            <input id="sdAddMomentInput" type="text" class="sfera-input rounded-full py-2.5 text-xs" placeholder="Добавить свой кадр или мысль в Сферу..." onkeydown="if(event.key==='Enter') addMomentToActiveSphere()">
+            <button onclick="addMomentToActiveSphere()" class="px-4 py-2.5 rounded-full text-xs font-bold text-white shrink-0" style="background: var(--accent-teal);">
+                Добавить
+            </button>
+        </div>
 
-    function toast(msg) {
-      const el = document.createElement("div");
-      el.className = "toast";
-      el.textContent = msg;
-      $("toastBox").appendChild(el);
-      setTimeout(() => el.remove(), 2800);
+        <div class="mt-3 text-right">
+            <button onclick="archiveActiveSphereNow()" class="text-[11px] font-semibold" style="color: var(--accent-violet);">
+                Завершить 24ч и сохранить в Капсулу воспоминаний
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ШТОРКА 4: УВЕДОМЛЕНИЯ -->
+<div id="notifSheet" class="sheet-backdrop" onclick="if(event.target===this) closeSheet('notifSheet')">
+    <div class="sheet-panel p-5 pb-7">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-extrabold">Уведомления</h3>
+            <button onclick="closeSheet('notifSheet')" class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--bg-card-subtle);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div id="notifSheetList" class="space-y-2"></div>
+    </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО: ПОЛНОЭКРАННОЕ ВЕРТИКАЛЬНОЕ ВИДЕО 9:16 -->
+<div id="videoFullscreenModal" class="center-modal-backdrop" onclick="if(event.target===this) closeCenterModal('videoFullscreenModal')">
+    <div class="w-full max-w-[400px] h-[82vh] rounded-[28px] overflow-hidden relative flex flex-col justify-between text-white shadow-2xl" style="background: linear-gradient(145deg, #1E3A8A 0%, #0D9488 52%, #7C3AED 100%);">
+        <div class="p-4 flex items-center justify-between bg-gradient-to-b from-black/55 to-transparent">
+            <span class="px-3 py-1 rounded-full text-[11px] font-bold bg-white/15 backdrop-blur-md">Вертикальное видео 9:16</span>
+            <button onclick="closeCenterModal('videoFullscreenModal')" class="w-9 h-9 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="text-center px-6">
+            <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="8 5 19 12 8 19 8 5"/></svg>
+            </div>
+            <div id="vfTitle" class="text-lg font-extrabold">Ночной Урал • Поток 9:16</div>
+        </div>
+        <div class="p-5 bg-gradient-to-t from-black/80 via-black/40 to-transparent space-y-3">
+            <div id="vfAuthor" class="text-xs font-bold"></div>
+            <p id="vfText" class="text-xs text-white/85"></p>
+            <button onclick="addVideoToFirstSphere()" class="w-full py-2.5 rounded-full text-xs font-bold text-slate-950" style="background: #2DD4BF;">
+                + Добавить этот клип в Активную Сферу
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО: ПОДТВЕРЖДЕНИЕ FIRST BADGE -->
+<div id="firstInfoModal" class="center-modal-backdrop" onclick="if(event.target===this) closeCenterModal('firstInfoModal')">
+    <div class="sfera-card w-full max-w-[340px] p-5 text-center">
+        <div class="inline-flex items-center justify-center px-3 py-1 rounded-full mb-2.5 text-xs font-extrabold tracking-widest" style="background: var(--badge-bg); border: 1px solid var(--badge-border); color: var(--badge-text);">FIRST</div>
+        <h4 class="text-sm font-extrabold mb-1">Знак оригинальности SFERA</h4>
+        <p id="firstInfoReason" class="text-xs leading-relaxed mb-4" style="color: var(--text-secondary);"></p>
+        <button onclick="closeCenterModal('firstInfoModal')" class="w-full py-2 rounded-full text-xs font-bold text-white" style="background: var(--accent-teal);">Понятно</button>
+    </div>
+</div>
+
+<!-- ТОСТ-УВЕДОМЛЕНИЕ -->
+<div id="toastBanner" class="fixed top-4 left-1/2 -translate-x-1/2 z-[80] pointer-events-none opacity-0 transition-opacity duration-300">
+    <div class="px-4 py-2 rounded-full text-xs font-semibold shadow-lg" style="background: var(--bg-card); border: 1px solid var(--accent-teal); color: var(--text-primary);" id="toastMessage"></div>
+</div>
+
+<script>
+    const API_BASE = 'https://sfera-server.onrender.com';
+    const STORAGE_KEY = 'sfera_alfa12_ui_v1';
+    const RESERVED_USERNAMES = ['asg', 'sfera', 'suport'];
+    const ALL_TAGS = ['#SferaOS', '#Технологии', '#Дизайн', '#Шахматы', '#Музыка'];
+
+    let authToken = localStorage.getItem('sfera_token') || '';
+
+    const defaultData = {
+        theme: 'light',
+        currentUser: null,
+        serverPosts: [],
+        localPosts: [
+            {
+                id: 'welcome-1',
+                type: 'welcome',
+                authorName: 'Александр',
+                username: 'aimatov',
+                isVerified: true,
+                verifyReason: 'Официальный аккаунт • Подтверждено SFERA.',
+                avatarBg: '#8294FF',
+                time: 'Публично',
+                title: 'Добро пожаловать в Sfera!',
+                text: 'Место, где каждый может поделиться своими мыслями, идеями и моментами жизни.',
+                hasHeroSphere: true,
+                saved: true,
+                likesCount: 128,
+                likedByMe: false,
+                comments: [
+                    { author: 'Сёма', text: 'Сфера выглядит невероятно чисто и современно!', time: '10 мин назад' },
+                    { author: 'Настя', text: 'Очень нравится бирюзовый акцент и плавность переключения тем.', time: '6 мин назад' }
+                ]
+            },
+            {
+                id: 'sphere-2',
+                type: 'sphere',
+                authorName: 'Сёма',
+                username: 'sema_dev',
+                isVerified: false,
+                avatarBg: '#16B8A6',
+                time: 'Активна · осталось 23ч 40м',
+                title: 'Активная Сфера дня: Что у вас сейчас на экране?',
+                text: 'Собираем живую капсулу на 24 часа. Через сутки она перейдёт в вечные Воспоминания.',
+                sphereTopic: 'Что у вас сейчас на экране?',
+                items: [
+                    { author: 'aimatov', text: 'Полируем интерфейс SFERA Alfa 1.2 на FastAPI + SQLite.' },
+                    { author: 'mira_ui', text: 'Проверяю матовое стекло в светлой и тёмной темах.' }
+                ],
+                saved: false,
+                likesCount: 34,
+                likedByMe: true,
+                comments: []
+            },
+            {
+                id: 'video-3',
+                type: 'video',
+                authorName: 'Настя',
+                username: 'nastya_vibe',
+                isVerified: false,
+                avatarBg: '#38BDF8',
+                time: '1 час назад · Видео 9:16',
+                title: 'Ночной Урал • Поток 9:16',
+                text: 'Тестируем вертикальные видео без лишнего визуального шума.',
+                saved: false,
+                likesCount: 52,
+                likedByMe: false,
+                comments: []
+            }
+        ],
+        memoryCapsules: [
+            {
+                id: 501,
+                title: 'Первый запуск ядра SFERA',
+                date: 'Архивировано • 24ч завершены',
+                count: 14
+            }
+        ],
+        authors: [
+            { id: 'sema', initials: 'СЁ', name: 'Сёма', handle: '@sema_dev · Разраб...', color: '#16B8A6', subscribed: false },
+            { id: 'mira', initials: 'MI', name: 'Mira', handle: '@mira_ui · Продуктовы...', color: '#8294FF', subscribed: true },
+            { id: 'bega', initials: 'БЕ', name: 'Бега', handle: '@bega_chess · Блиц...', color: '#38BDF8', subscribed: false }
+        ],
+        chats: {
+            sema: {
+                id: 'sema',
+                initials: 'СМ',
+                name: 'Сёма',
+                color: '#16B8A6',
+                time: '19:24',
+                preview: 'Дизайн Sfera просто огонь! Когда ...',
+                unread: 2,
+                e2ee: false,
+                messages: [
+                    { from: 'in', text: 'Дизайн Sfera просто огонь! Когда открываем доступ остальным?', time: '19:24', encrypted: false }
+                ]
+            },
+            nastya: {
+                id: 'nastya',
+                initials: 'НС',
+                name: 'Настя',
+                color: '#38BDF8',
+                time: '18:10',
+                preview: 'Отправила новые фото для ленты',
+                unread: 0,
+                e2ee: true,
+                messages: [
+                    { from: 'in', text: 'Отправила новые фото для ленты. Включила E2EE для приватности.', time: '18:10', encrypted: true, cipher: 'AES-GCM: 8kP9vL2xQ7mW4z==' }
+                ]
+            },
+            team: {
+                id: 'team',
+                initials: 'SF',
+                name: 'Команда SFERA',
+                color: '#8294FF',
+                time: 'Вчера',
+                preview: 'Александр: Утвердили 5 кнопок нижней...',
+                unread: 0,
+                e2ee: false,
+                messages: [
+                    { from: 'out', text: 'Утвердили 5 кнопок нижней панели и бейдж FIRST над юзернеймом.', time: 'Вчера', encrypted: false }
+                ]
+            }
+        },
+        notifications: [
+            { text: 'Сёма прокомментировал вашу публикацию «Добро пожаловать в Sfera!»', time: '10 мин назад' },
+            { text: 'Активная Сфера дня собрала 14 историй за последние часы', time: '25 мин назад' }
+        ]
+    };
+
+    let state = loadAppState();
+    let currentTab = 'home';
+    let currentFeedSub = 'for_you';
+    let currentProfSub = 'posts';
+    let selectedTag = '#SferaOS';
+    let createMode = 'post';
+    let activeCommentsPostId = null;
+    let activeSphereId = 'sphere-2';
+    let activeChatId = null;
+
+    function loadAppState() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? Object.assign({}, defaultData, JSON.parse(raw)) : JSON.parse(JSON.stringify(defaultData));
+        } catch (e) {
+            return JSON.parse(JSON.stringify(defaultData));
+        }
     }
 
-    function escapeHtml(s = "") {
-      return String(s).replace(/[&<>"']/g, (c) => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-      }[c]));
+    function saveAppState() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {}
     }
 
-    function formatTime(iso) {
-      if (!iso) return "только что";
-      const d = new Date(iso);
-      if (Number.isNaN(d.getTime())) return iso;
-      return d.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+    async function apiRequest(path, options = {}) {
+        const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+        if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+        const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.detail || `Ошибка сервера (${res.status})`);
+        return data;
     }
 
-    async function api(path, options = {}) {
-      const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
-      if (token) headers["Authorization"] = `Bearer ${token}`;
-      const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.detail || `Ошибка ${res.status}`);
-      return data;
+    function formatRelativeTime(iso) {
+        if (!iso) return 'Только что';
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return iso;
+        const diffMin = Math.floor((Date.now() - d.getTime()) / 60000);
+        if (diffMin < 1) return 'Только что';
+        if (diffMin < 60) return `${diffMin} мин назад`;
+        const diffH = Math.floor(diffMin / 60);
+        if (diffH < 24) return `${diffH} ч назад`;
+        return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
     }
 
-    // --- Тема ---
-    function applyTheme(theme) {
-      document.documentElement.setAttribute("data-theme", theme);
-      localStorage.setItem("sfera_theme", theme);
-      const isDark = theme === "dark";
-      $("topThemeBtn").textContent = isDark ? "☀️" : "🌙";
-      $("profThemeIcon").textContent = isDark ? "☀️" : "🌙";
-      $("profThemeLabel").textContent = isDark ? "Тёмная тема" : "Светлая тема";
+    function getAllPosts() {
+        const mappedServer = (state.serverPosts || []).map(p => ({
+            id: p.id,
+            isServer: true,
+            type: p.content.startsWith('[Сфера 24ч]') ? 'sphere' : 'post',
+            authorName: p.display_name || p.username,
+            username: p.username,
+            isVerified: p.username === 'aimatov',
+            verifyReason: 'Официальный аккаунт • Подтверждено SFERA.',
+            avatarBg: p.username === 'aimatov' ? '#8294FF' : '#16B8A6',
+            time: `${formatRelativeTime(p.created_at)} · Публично`,
+            title: '',
+            text: p.content.replace(/^\[Сфера 24ч\]\s*/, ''),
+            sphereTopic: p.content.startsWith('[Сфера 24ч]') ? p.content.replace(/^\[Сфера 24ч\]\s*/, '') : '',
+            items: p.content.startsWith('[Сфера 24ч]') ? [{ author: p.username, text: p.content.replace(/^\[Сфера 24ч\]\s*/, '') }] : [],
+            saved: Boolean(p.saved),
+            likesCount: p.likes_count || 0,
+            likedByMe: Boolean(p.liked_by_me),
+            comments: p.comments || []
+        }));
+        return [...mappedServer, ...state.localPosts];
     }
 
-    applyTheme(localStorage.getItem("sfera_theme") || "dark");
+    /* =========================================================
+       ТЕМА И УВЕДОМЛЕНИЯ
+       ========================================================= */
+    function applyTheme() {
+        document.documentElement.setAttribute('data-theme', state.theme);
+        const isDark = state.theme === 'dark';
+        const icon = isDark
+            ? '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="6.34" y1="17.66" x2="4.93" y2="19.07"/><line x1="19.07" y1="4.93" x2="17.66" y2="6.34"/></svg>'
+            : '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+
+        document.querySelectorAll('.theme-icon-slot').forEach(el => el.innerHTML = icon);
+        const profText = document.getElementById('profThemeText');
+        if (profText) profText.textContent = isDark ? 'Тёмная тема' : 'Светлая тема';
+    }
 
     function toggleTheme() {
-      const cur = document.documentElement.getAttribute("data-theme");
-      applyTheme(cur === "dark" ? "light" : "dark");
+        state.theme = state.theme === 'light' ? 'dark' : 'light';
+        saveAppState();
+        applyTheme();
     }
 
-    $("topThemeBtn").addEventListener("click", toggleTheme);
-    $("profThemeBtn").addEventListener("click", toggleTheme);
-
-    // --- Вход и регистрация ---
-    $("authTabLogin").addEventListener("click", () => {
-      $("authTabLogin").classList.add("active");
-      $("authTabRegister").classList.remove("active");
-      $("loginForm").classList.remove("hidden");
-      $("registerForm").classList.add("hidden");
-    });
-
-    $("authTabRegister").addEventListener("click", () => {
-      $("authTabRegister").classList.add("active");
-      $("authTabLogin").classList.remove("active");
-      $("registerForm").classList.remove("hidden");
-      $("loginForm").classList.add("hidden");
-    });
-
-    $("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      try {
-        const res = await api("/api/login", {
-          method: "POST",
-          body: JSON.stringify({
-            login: $("loginIdent").value.trim(),
-            password: $("loginPass").value
-          })
-        });
-        token = res.token;
-        localStorage.setItem("sfera_token", token);
-        await bootApp(res.user);
-      } catch (err) {
-        toast(err.message);
-      }
-    });
-
-    $("registerForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      try {
-        const res = await api("/api/register", {
-          method: "POST",
-          body: JSON.stringify({
-            display_name: $("regName").value.trim(),
-            username: $("regUsername").value.trim().replace(/^@/, ""),
-            email: $("regEmail").value.trim(),
-            password: $("regPass").value
-          })
-        });
-        token = res.token;
-        localStorage.setItem("sfera_token", token);
-        await bootApp(res.user);
-        toast("Аккаунт создан!");
-      } catch (err) {
-        toast(err.message);
-      }
-    });
-
-    async function logout() {
-      try { await api("/api/logout", { method: "POST" }); } catch (_) {}
-      token = "";
-      currentUser = null;
-      localStorage.removeItem("sfera_token");
-      $("appView").classList.add("hidden");
-      $("authView").classList.remove("hidden");
+    function showToast(msg) {
+        const el = document.getElementById('toastBanner');
+        document.getElementById('toastMessage').textContent = msg;
+        el.style.opacity = '1';
+        clearTimeout(window._tTimer);
+        window._tTimer = setTimeout(() => { el.style.opacity = '0'; }, 2600);
     }
 
-    $("logoutAppBtn").addEventListener("click", logout);
-
-    // --- Нижняя навигация ---
-    function switchNav(tabId) {
-      document.querySelectorAll(".bnav-btn[data-nav]").forEach((b) => {
-        b.classList.toggle("active", b.dataset.nav === tabId);
-      });
-      ["tab-home", "tab-explore", "tab-chats", "tab-profile"].forEach((id) => {
-        $(id).classList.toggle("hidden", id !== tabId);
-      });
-      if (tabId === "tab-explore") renderExplore();
-      if (tabId === "tab-chats") renderChats();
-      if (tabId === "tab-profile") renderProfile();
+    function esc(s) {
+        return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    document.querySelectorAll(".bnav-btn[data-nav]").forEach((btn) => {
-      btn.addEventListener("click", () => switchNav(btn.dataset.nav));
-    });
-
-    $("goHomeTop").addEventListener("click", () => switchNav("tab-home"));
-    $("topSearchBtn").addEventListener("click", () => switchNav("tab-explore"));
-    $("topBellBtn").addEventListener("click", () => toast("Новых уведомлений пока нет"));
-    $("topAvatarBtn").addEventListener("click", () => switchNav("tab-profile"));
-
-    // --- Лента: вкладки и «Моменты» ---
-    document.querySelectorAll(".feed-tab").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".feed-tab").forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        feedMode = btn.dataset.feedMode;
-        renderHomeFeed();
-      });
-    });
-
-    function renderMoments() {
-      const initial = (currentUser?.display_name || currentUser?.username || "A")[0].toUpperCase();
-      const stories = [
-        { own: true, initial: "+", name: "Ваш момент" },
-        { own: false, initial, color: "", name: currentUser?.display_name || "Александр" },
-        { own: false, initial: "СМ", color: "teal", name: "Сёма" },
-        { own: false, initial: "НС", color: "blue", name: "Настя" },
-        { own: false, initial: "БГ", color: "", name: "Бега" }
-      ];
-
-      $("momentsBar").innerHTML = stories.map((s) => `
-        <div class="moment-item" onclick="${s.own ? "openComposer()" : `toast('Момент: ${escapeHtml(s.name)}')`}">
-          <div class="moment-ring ${s.own ? "own" : ""}">
-            <div class="moment-inner" style="${s.color === "teal" ? "background:var(--teal)" : s.color === "blue" ? "background:var(--blue)" : ""}">${escapeHtml(s.initial)}</div>
-            ${s.own ? `<span class="moment-plus">+</span>` : ""}
-          </div>
-          <span class="moment-name">${escapeHtml(s.name)}</span>
-        </div>
-      `).join("");
-    }
-
-    function buildPostCard(p) {
-      const authorName = p.display_name || p.username || "Пользователь";
-      const handle = `@${p.username || "user"}`;
-      const initial = authorName[0].toUpperCase();
-      const isMine = currentUser && p.username === currentUser.username;
-      const isSaved = savedIds.includes(p.id);
-      const postComments = commentsStore[p.id] || [];
-      const isWelcomeArt = !isMine && (p.content || "").toLowerCase().includes("sfera");
-
-      return `
-        <article class="post-card">
-          <div class="post-top">
-            <div class="post-author-wrap">
-              <span class="avatar-circle" style="${isMine ? "background:var(--purple)" : "background:var(--teal)"}">${escapeHtml(initial)}</span>
-              <div>
-                <div class="post-author-name">
-                  <span>${escapeHtml(authorName)}</span>
-                  <span class="verified-dot">✓</span>
-                </div>
-                <div class="post-sub">${formatTime(p.created_at)} · ${handle}</div>
-              </div>
-            </div>
-            <button type="button" class="action-link" onclick="toggleSavePost(${p.id})">${isSaved ? "★ Сохранено" : "☆"}</button>
-          </div>
-
-          <div class="post-text">${escapeHtml(p.content)}</div>
-
-          ${isWelcomeArt ? `
-            <div class="post-art-card">
-              <div class="post-sphere-3d"></div>
-            </div>
-          ` : ""}
-
-          <div class="post-actions">
-            <button type="button" class="action-link ${p.liked_by_me ? "liked" : ""}" onclick="onLike(${p.id})">
-              ${p.liked_by_me ? "♥" : "♡"} ${p.likes_count ?? 0}
-            </button>
-            <button type="button" class="action-link" onclick="openComments(${p.id})">
-              💬 ${postComments.length}
-            </button>
-            ${isMine ? `<button type="button" class="action-link del" onclick="onDeletePost(${p.id})">Удалить</button>` : ""}
-          </div>
-        </article>
-      `;
-    }
-
-    function getFilteredPosts() {
-      let list = [...postsCache];
-      if (feedMode === "following") {
-        list = list.filter((p) => followedHandles.includes(`@${p.username}`) || (currentUser && p.username === currentUser.username));
-      } else if (feedMode === "popular") {
-        list.sort((a, b) => (b.likes_count || 0) - (a.likes_count || 0));
-      }
-      return list;
-    }
-
-    function renderHomeFeed() {
-      const list = getFilteredPosts();
-      $("homeFeedList").innerHTML = list.length
-        ? list.map(buildPostCard).join("")
-        : `<div class="empty-msg">Публикаций пока нет. Нажмите «+ Создать», чтобы написать первый пост.</div>`;
-    }
-
-    async function loadPosts() {
-      const res = await api("/api/posts");
-      postsCache = res.posts || [];
-      renderHomeFeed();
-      if (!$("tab-explore").classList.contains("hidden")) renderExplore();
-      if (!$("tab-profile").classList.contains("hidden")) renderProfile();
-    }
-
-    window.onLike = async (id) => {
-      try {
-        await api(`/api/posts/${id}/like`, { method: "POST" });
-        await loadPosts();
-      } catch (err) {
-        toast(err.message);
-      }
-    };
-
-    window.onDeletePost = async (id) => {
-      try {
-        await api(`/api/posts/${id}`, { method: "DELETE" });
-        await loadPosts();
-        toast("Публикация удалена");
-      } catch (err) {
-        toast(err.message);
-      }
-    };
-
-    window.toggleSavePost = (id) => {
-      if (savedIds.includes(id)) {
-        savedIds = savedIds.filter((x) => x !== id);
-        toast("Убрано из сохранённого");
-      } else {
-        savedIds.push(id);
-        toast("Сохранено в профиль");
-      }
-      localStorage.setItem("sfera_saved_ids", JSON.stringify(savedIds));
-      renderHomeFeed();
-      if (!$("tab-profile").classList.contains("hidden")) renderProfile();
-    };
-
-    // --- Композер ---
-    function openComposer() {
-      $("composerModal").classList.remove("hidden");
-      $("composerTextarea").focus();
-    }
-
-    $("navCreateBtn").addEventListener("click", openComposer);
-    $("openComposerFromQuick").addEventListener("click", openComposer);
-    $("openComposerPhotoBtn").addEventListener("click", openComposer);
-    $("closeComposerBtn").addEventListener("click", () => $("composerModal").classList.add("hidden"));
-
-    $("toolPhoto").addEventListener("click", () => toast("Прикрепление фото будет добавлено следующим шагом"));
-    $("toolVideo").addEventListener("click", () => toast("Загрузка видео будет добавлена следующим шагом"));
-    $("toolPoll").addEventListener("click", () => {
-      $("composerTextarea").value += ($("composerTextarea").value ? "\n\n" : "") + "Опрос:\n• Вариант 1\n• Вариант 2";
-    });
-    $("toolGeo").addEventListener("click", () => {
-      $("composerTextarea").value += ($("composerTextarea").value ? "\n" : "") + "📍 Каменск-Уральский";
-    });
-
-    $("submitComposerBtn").addEventListener("click", async () => {
-      const content = $("composerTextarea").value.trim();
-      if (!content) {
-        toast("Напишите текст публикации");
-        return;
-      }
-      try {
-        await api("/api/posts", {
-          method: "POST",
-          body: JSON.stringify({ content })
-        });
-        $("composerTextarea").value = "";
-        $("composerModal").classList.add("hidden");
-        switchNav("tab-home");
-        await loadPosts();
-        toast("Опубликовано");
-      } catch (err) {
-        toast(err.message);
-      }
-    });
-
-    // --- Комментарии ---
-    window.openComments = (postId) => {
-      activeCommentPostId = postId;
-      $("commentsModal").classList.remove("hidden");
-      renderCommentsList();
-    };
-
-    $("closeCommentsBtn").addEventListener("click", () => {
-      activeCommentPostId = null;
-      $("commentsModal").classList.add("hidden");
-    });
-
-    function renderCommentsList() {
-      const items = commentsStore[activeCommentPostId] || [];
-      $("commentsList").innerHTML = items.length
-        ? items.map((c) => `
-            <div class="comment-item">
-              <div class="comment-top">
-                <span class="comment-author">${escapeHtml(c.author)}</span>
-                <span class="comment-time">${escapeHtml(c.time)}</span>
-              </div>
-              <div class="comment-body">${escapeHtml(c.text)}</div>
-            </div>
-          `).join("")
-        : `<div class="empty-msg">Комментариев пока нет. Напишите первый!</div>`;
-    }
-
-    $("commentForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const text = $("commentInput").value.trim();
-      if (!text || !activeCommentPostId) return;
-      if (!commentsStore[activeCommentPostId]) commentsStore[activeCommentPostId] = [];
-      commentsStore[activeCommentPostId].push({
-        author: currentUser?.display_name || "Александр",
-        time: "только что",
-        text
-      });
-      localStorage.setItem("sfera_comments", JSON.stringify(commentsStore));
-      $("commentInput").value = "";
-      renderCommentsList();
-      renderHomeFeed();
-    });
-
-    // --- Обзор ---
-    document.querySelectorAll(".tag-chip").forEach((chip) => {
-      chip.addEventListener("click", () => {
-        document.querySelectorAll(".tag-chip").forEach((c) => c.classList.remove("active"));
-        chip.classList.add("active");
-        activeTag = chip.dataset.tag;
-        renderExplore();
-      });
-    });
-
-    $("exploreSearch").addEventListener("input", (e) => {
-      searchQuery = e.target.value.trim().toLowerCase();
-      renderExplore();
-    });
-
-    window.toggleFollow = (handle) => {
-      if (followedHandles.includes(handle)) {
-        followedHandles = followedHandles.filter((h) => h !== handle);
-      } else {
-        followedHandles.push(handle);
-      }
-      localStorage.setItem("sfera_followed", JSON.stringify(followedHandles));
-      renderExplore();
-    };
-
-    function renderExplore() {
-      $("recommendedAuthors").innerHTML = DEMO_AUTHORS.map((a) => {
-        const sub = followedHandles.includes(a.handle);
+    function renderUsernameWithFirst(username, isVerified, reason = '') {
+        const safeReason = (reason || 'Официальный аккаунт • Подтверждено SFERA.').replace(/'/g, '&#39;');
         return `
-          <div class="author-row">
-            <div class="author-info">
-              <span class="avatar-circle ${a.color}">${escapeHtml(a.initials)}</span>
-              <div style="min-width:0;">
-                <div class="author-name">${escapeHtml(a.name)}</div>
-                <div class="author-handle">${escapeHtml(a.handle)}</div>
-              </div>
-            </div>
-            <button type="button" class="${sub ? "btn-soft" : "btn-teal"}" onclick="toggleFollow('${escapeHtml(a.handle)}')">
-              ${sub ? "Подписка" : "Подписаться"}
-            </button>
-          </div>
+            <span class="username-first-wrap">
+                <span class="text-xs font-semibold" style="color: var(--text-secondary);">@${esc(username)}</span>
+                ${isVerified ? `<span class="badge-first-pill" onclick="event.stopPropagation(); showFirstModal('${safeReason}')">FIRST</span>` : ''}
+            </span>
         `;
-      }).join("");
-
-      const filtered = postsCache.filter((p) => {
-        const txt = (p.content || "").toLowerCase();
-        const author = (p.display_name || p.username || "").toLowerCase();
-        const tagOk = !activeTag || txt.includes(activeTag.toLowerCase());
-        const qOk = !searchQuery || txt.includes(searchQuery) || author.includes(searchQuery);
-        return tagOk && qOk;
-      });
-
-      $("explorePostsList").innerHTML = filtered.length
-        ? filtered.map(buildPostCard).join("")
-        : `<div class="empty-msg">Ничего не найдено</div>`;
     }
 
-    // --- Чаты ---
-    function renderChats() {
-      $("dialogsList").innerHTML = DEMO_DIALOGS.map((d) => `
-        <div class="chat-card" onclick="toast('Диалог с ${escapeHtml(d.name)} откроется после подключения роутера чатов')">
-          <span class="avatar-circle ${d.color}" style="width:46px;height:46px;font-size:15px;">${escapeHtml(d.initials)}</span>
-          <div class="chat-card-main">
-            <div class="chat-card-top">
-              <span class="chat-card-name">${escapeHtml(d.name)}</span>
-              <span class="chat-card-time">${escapeHtml(d.time)}</span>
-            </div>
-            <div class="chat-card-preview">${escapeHtml(d.preview)}</div>
-          </div>
-          ${d.unread ? `<span class="unread-badge">${d.unread}</span>` : ""}
-        </div>
-      `).join("");
+    function showFirstModal(reason) {
+        document.getElementById('firstInfoReason').textContent = reason;
+        document.getElementById('firstInfoModal').classList.add('open');
     }
 
-    // --- Профиль ---
-    function syncHeaderUser() {
-      if (!currentUser) return;
-      const initial = (currentUser.display_name || currentUser.username || "A")[0].toUpperCase();
-      $("topAvatarBtn").textContent = initial;
-      $("quickAvatar").textContent = initial;
-      $("profAvatarLg").textContent = initial;
-      $("profName").textContent = currentUser.display_name || currentUser.username;
-      $("profHandle").textContent = `@${currentUser.username} · Каменск-Уральский`;
-      $("profBio").textContent = currentUser.bio || "Создаю социальную сеть нового поколения SFERA — «Одна сфера. Миллионы историй.» Минимализм, технологии и живое общение.";
+    function closeCenterModal(id) {
+        document.getElementById(id).classList.remove('open');
     }
 
-    document.querySelectorAll(".profile-subtab").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".profile-subtab").forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        profileSubtab = btn.dataset.ptab;
-        renderProfile();
-      });
-    });
+    /* =========================================================
+       НАВИГАЦИЯ
+       ========================================================= */
+    function switchTab(tab, focusSearch = false) {
+        currentTab = tab;
+        document.querySelectorAll('.page-tab').forEach(sec => sec.classList.add('hidden'));
+        document.getElementById('tab-' + tab).classList.remove('hidden');
+        document.getElementById('homeFeedTabsBar').classList.toggle('hidden', tab !== 'home');
 
-    function renderProfile() {
-      syncHeaderUser();
-      const mine = currentUser ? postsCache.filter((p) => p.username === currentUser.username) : [];
-      const saved = postsCache.filter((p) => savedIds.includes(p.id));
-      $("profPostsCount").textContent = mine.length;
-      $("savedCount").textContent = saved.length;
-
-      const list = profileSubtab === "posts" ? mine : saved;
-      $("profileTabContent").innerHTML = list.length
-        ? list.map(buildPostCard).join("")
-        : `<div class="empty-msg">${profileSubtab === "posts" ? "Публикаций пока нет" : "В сохранённом пока пусто"}</div>`;
-    }
-
-    $("editBioBtn").addEventListener("click", () => {
-      if (!currentUser) return;
-      $("bioNameInput").value = currentUser.display_name || "";
-      $("bioTextInput").value = currentUser.bio || "";
-      $("bioModal").classList.remove("hidden");
-    });
-
-    $("closeBioBtn").addEventListener("click", () => $("bioModal").classList.add("hidden"));
-
-    $("bioForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      try {
-        const res = await api("/api/me", {
-          method: "PATCH",
-          body: JSON.stringify({
-            display_name: $("bioNameInput").value.trim(),
-            bio: $("bioTextInput").value.trim()
-          })
+        document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
+            const active = btn.getAttribute('data-nav') === tab;
+            btn.style.color = active ? 'var(--accent-teal)' : 'var(--text-secondary)';
         });
-        currentUser = res.user;
-        $("bioModal").classList.add("hidden");
-        syncHeaderUser();
-        await loadPosts();
-        toast("Профиль обновлён");
-      } catch (err) {
-        toast(err.message);
-      }
-    });
 
-    async function bootApp(userObj = null) {
-      currentUser = userObj || (await api("/api/me")).user;
-      $("authView").classList.add("hidden");
-      $("appView").classList.remove("hidden");
-      syncHeaderUser();
-      renderMoments();
-      await loadPosts();
+        if (tab === 'home') renderHome();
+        if (tab === 'explore') {
+            renderExplorePage();
+            if (focusSearch) setTimeout(() => document.getElementById('exploreSearchInput').focus(), 100);
+        }
+        if (tab === 'chats') renderChatsList();
+        if (tab === 'profile') renderProfilePage();
     }
 
-    if (token) {
-      bootApp().catch(() => {
-        token = "";
-        localStorage.removeItem("sfera_token");
-      });
+    /* =========================================================
+       1. ГЛАВНАЯ ЛЕНТА
+       ========================================================= */
+    function setFeedSubTab(sub) {
+        currentFeedSub = sub;
+        document.querySelectorAll('.feed-subtab').forEach(btn => {
+            const active = btn.getAttribute('data-ftab') === sub;
+            btn.style.color = active ? 'var(--text-primary)' : 'var(--text-secondary)';
+            btn.querySelector('.tab-underline').classList.toggle('hidden', !active);
+        });
+        renderFeedCards();
     }
-  </script>
+
+    function renderHome() {
+        renderSpheresBar();
+        setFeedSubTab(currentFeedSub);
+    }
+
+    function renderSpheresBar() {
+        const bar = document.getElementById('spheresStoryBar');
+        const meName = state.currentUser ? state.currentUser.displayName : 'Александр';
+        const meInit = meName[0].toUpperCase();
+        const stories = [
+            { id: 'new', name: 'Ваш момент', initials: '+', color: 'var(--bg-card-subtle)', isAdd: true },
+            { id: 'sphere-2', name: meName, initials: meInit, color: '#8294FF', active: true },
+            { id: 'sphere-2', name: 'Сёма', initials: 'СМ', color: '#16B8A6', active: true },
+            { id: 'sphere-2', name: 'Настя', initials: 'НС', color: '#38BDF8', active: true },
+            { id: 'sphere-2', name: 'Бега', initials: 'БГ', color: '#8294FF', active: true }
+        ];
+
+        bar.innerHTML = stories.map(st => {
+            if (st.isAdd) {
+                return `
+                    <button onclick="openCreateSheet('sphere')" class="flex flex-col items-center gap-1.5 shrink-0">
+                        <div class="relative w-14 h-14 rounded-full flex items-center justify-center border" style="background: var(--bg-card-subtle); border-color: var(--border-subtle); color: var(--text-secondary);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <span class="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold border-2" style="background: var(--accent-teal); border-color: var(--bg-app);">+</span>
+                        </div>
+                        <span class="text-[11px] font-medium" style="color: var(--text-secondary);">${esc(st.name)}</span>
+                    </button>
+                `;
+            }
+            return `
+                <button onclick="openSphereSheet('${st.id}')" class="flex flex-col items-center gap-1.5 shrink-0">
+                    <div class="w-14 h-14 rounded-full p-[2.5px]" style="border: 2px solid var(--accent-teal);">
+                        <div class="w-full h-full rounded-full flex items-center justify-center text-white font-bold text-sm" style="background: ${st.color};">
+                            ${esc(st.initials)}
+                        </div>
+                    </div>
+                    <span class="text-[11px] font-medium">${esc(st.name)}</span>
+                </button>
+            `;
+        }).join('');
+    }
+
+    function renderFeedCards() {
+        const listEl = document.getElementById('feedCardsList');
+        let list = getAllPosts();
+        if (currentFeedSub === 'popular') {
+            list.sort((a, b) => (b.likesCount || 0) - (a.likesCount || 0));
+        } else if (currentFeedSub === 'following') {
+            const me = state.currentUser ? state.currentUser.username : '';
+            list = list.filter(p => p.username === me || p.username === 'sema_dev');
+        }
+
+        listEl.innerHTML = list.map(post => {
+            const initials = post.authorName ? post.authorName[0].toUpperCase() : 'S';
+            const isMine = state.currentUser && post.username === state.currentUser.username && post.isServer;
+
+            let extraVisual = '';
+            if (post.hasHeroSphere) {
+                extraVisual = `
+                    <div class="hero-sphere-art my-3">
+                        <div class="hero-sphere-ball"></div>
+                    </div>
+                `;
+            } else if (post.type === 'sphere') {
+                const previewItems = (post.items || []).slice(0, 2).map(it => `
+                    <div class="px-3 py-2 rounded-xl text-xs" style="background: var(--bg-card);">
+                        <strong style="color: var(--accent-teal);">@${esc(it.author)}:</strong> ${esc(it.text)}
+                    </div>
+                `).join('');
+                extraVisual = `
+                    <div class="my-3 p-3.5 rounded-2xl space-y-2" style="background: var(--bg-card-subtle);">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold">${esc(post.sphereTopic || post.title)}</span>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full" style="background: rgba(22, 184, 166, 0.16); color: var(--accent-teal);">24ч</span>
+                        </div>
+                        <div class="space-y-1.5">${previewItems}</div>
+                        <button onclick="openSphereSheet('${post.id}')" class="w-full py-2 rounded-full text-xs font-bold text-white" style="background: var(--accent-teal);">
+                            + Добавить момент в Сферу
+                        </button>
+                    </div>
+                `;
+            } else if (post.type === 'video') {
+                extraVisual = `
+                    <div onclick="openFullscreenVideo('${post.id}')" class="my-3 rounded-2xl p-4 h-[260px] flex flex-col justify-between text-white cursor-pointer relative overflow-hidden" style="background: linear-gradient(145deg, #1E3A8A 0%, #0D9488 55%, #7C3AED 100%);">
+                        <span class="self-start px-2.5 py-1 rounded-full text-[10px] font-bold bg-black/35 backdrop-blur-md">Вертикальное видео 9:16</span>
+                        <div class="w-12 h-12 mx-auto rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="8 5 19 12 8 19 8 5"/></svg>
+                        </div>
+                        <div class="text-xs font-bold">${esc(post.title)}</div>
+                    </div>
+                `;
+            }
+
+            return `
+                <article class="sfera-card p-4">
+                    <div class="flex items-start justify-between gap-2 mb-2.5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0" style="background: ${post.avatarBg || '#8294FF'};">
+                                ${initials}
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-bold text-[15px]">${esc(post.authorName)}</span>
+                                    ${renderUsernameWithFirst(post.username, post.isVerified, post.verifyReason)}
+                                </div>
+                                <div class="text-[11px] mt-0.5" style="color: var(--text-secondary);">${esc(post.time)}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            ${isMine ? `<button onclick="deleteServerPost(${post.id})" class="px-2.5 py-1 rounded-full text-[11px] font-semibold text-rose-500" style="background: var(--bg-card-subtle);">Удалить</button>` : ''}
+                            <button onclick="toggleSavePost('${post.id}')" class="p-1.5 rounded-full" style="color: var(--text-secondary);" title="Сохранить">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    ${post.title && post.type === 'welcome' ? `<h3 class="text-[16px] font-extrabold mb-1.5">${esc(post.title)}</h3>` : ''}
+                    <p class="text-[14px] leading-relaxed" style="color: var(--text-primary);">${esc(post.text)}</p>
+
+                    ${extraVisual}
+
+                    <div class="pt-2.5 mt-1 border-t flex items-center justify-between gap-2 flex-wrap" style="border-color: var(--border-subtle);">
+                        <button onclick="toggleLikePost('${post.id}', ${post.isServer ? 'true' : 'false'})" class="px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition border"
+                            style="${post.likedByMe
+                                ? 'background: rgba(22, 184, 166, 0.14); border-color: var(--accent-teal); color: var(--accent-teal);'
+                                : 'background: var(--bg-card-subtle); border-color: transparent; color: var(--text-secondary);'}">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="${post.likedByMe ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            <span>Нравится · ${post.likesCount}</span>
+                        </button>
+
+                        <button onclick="openCommentsSheet('${post.id}')" class="px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5" style="background: var(--bg-card-subtle); color: var(--text-secondary);">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            <span>${(post.comments || []).length}</span>
+                        </button>
+                    </div>
+                </article>
+            `;
+        }).join('');
+    }
+
+    async function toggleLikePost(postId, isServer) {
+        if (isServer) {
+            try {
+                await apiRequest(`/api/posts/${postId}/like`, { method: 'POST' });
+                await fetchServerPosts();
+                renderFeedCards();
+            } catch (err) {
+                showToast(err.message);
+            }
+            return;
+        }
+        const p = state.localPosts.find(item => String(item.id) === String(postId));
+        if (!p) return;
+        p.likedByMe = !p.likedByMe;
+        p.likesCount += p.likedByMe ? 1 : -1;
+        saveAppState();
+        renderFeedCards();
+    }
+
+    async function deleteServerPost(postId) {
+        try {
+            await apiRequest(`/api/posts/${postId}`, { method: 'DELETE' });
+            await fetchServerPosts();
+            renderFeedCards();
+            if (currentTab === 'profile') renderProfilePage();
+            showToast('Публикация удалена');
+        } catch (err) {
+            showToast(err.message);
+        }
+    }
+
+    function toggleSavePost(postId) {
+        const p = state.localPosts.find(item => String(item.id) === String(postId));
+        if (p) {
+            p.saved = !p.saved;
+            saveAppState();
+            showToast(p.saved ? 'Добавлено в сохранённое' : 'Убрано из сохранённого');
+            return;
+        }
+        showToast('Сохранено');
+    }
+
+    /* =========================================================
+       КОММЕНТАРИИ
+       ========================================================= */
+    function openCommentsSheet(postId) {
+        activeCommentsPostId = String(postId);
+        renderCommentsSheet();
+        document.getElementById('commentsSheet').classList.add('open');
+    }
+
+    function renderCommentsSheet() {
+        const p = getAllPosts().find(item => String(item.id) === activeCommentsPostId);
+        if (!p) return;
+        const box = document.getElementById('commentsSheetList');
+        if (!p.comments || !p.comments.length) {
+            box.innerHTML = `<div class="text-xs text-center py-6" style="color: var(--text-secondary);">Пока нет комментариев. Напишите первый!</div>`;
+            return;
+        }
+        box.innerHTML = p.comments.map(c => `
+            <div class="p-3.5 rounded-2xl" style="background: var(--bg-card-subtle);">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs font-bold">${esc(c.author)}</span>
+                    <span class="text-[11px]" style="color: var(--text-secondary);">${esc(c.time)}</span>
+                </div>
+                <p class="text-xs leading-relaxed">${esc(c.text)}</p>
+            </div>
+        `).join('');
+    }
+
+    function postNewComment() {
+        const input = document.getElementById('newCommentInput');
+        const text = input.value.trim();
+        if (!text) return;
+        const local = state.localPosts.find(item => String(item.id) === activeCommentsPostId);
+        const author = state.currentUser ? state.currentUser.displayName : 'Александр';
+        if (local) {
+            local.comments.push({ author, text, time: 'Только что' });
+            saveAppState();
+        } else {
+            const srv = state.serverPosts.find(item => String(item.id) === activeCommentsPostId);
+            if (srv) {
+                srv.comments = srv.comments || [];
+                srv.comments.push({ author, text, time: 'Только что' });
+            }
+        }
+        input.value = '';
+        renderCommentsSheet();
+        renderFeedCards();
+    }
+
+    /* =========================================================
+       СОЗДАНИЕ ПУБЛИКАЦИИ (ОТПРАВЛЯЕТСЯ НА RENDER)
+       ========================================================= */
+    function openCreateSheet(mode = 'post') {
+        selectCreateMode(mode);
+        document.getElementById('createSheet').classList.add('open');
+    }
+
+    function closeSheet(id) {
+        document.getElementById(id).classList.remove('open');
+    }
+
+    function selectCreateMode(mode) {
+        createMode = mode;
+        document.querySelectorAll('.create-mode-pill').forEach(btn => {
+            const active = btn.getAttribute('data-cmode') === mode;
+            btn.style.background = active ? 'rgba(22, 184, 166, 0.14)' : 'var(--bg-card-subtle)';
+            btn.style.borderColor = active ? 'var(--accent-teal)' : 'transparent';
+        });
+        document.getElementById('sphereExtraFields').classList.toggle('hidden', mode !== 'sphere');
+    }
+
+    async function submitNewPost() {
+        const rawText = document.getElementById('createTextarea').value.trim();
+        if (!rawText) {
+            showToast('Напишите текст публикации');
+            return;
+        }
+        const content = createMode === 'sphere'
+            ? `[Сфера 24ч] ${document.getElementById('sphereTopicInput').value.trim() || rawText}`
+            : rawText;
+
+        const btn = document.getElementById('btnPublishSubmit');
+        btn.disabled = true;
+        try {
+            await apiRequest('/api/posts', {
+                method: 'POST',
+                body: JSON.stringify({ content })
+            });
+            document.getElementById('createTextarea').value = '';
+            document.getElementById('sphereTopicInput').value = '';
+            closeSheet('createSheet');
+            await fetchServerPosts();
+            switchTab('home');
+            showToast('Опубликовано на сервере SFERA');
+        } catch (err) {
+            showToast(err.message);
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    /* =========================================================
+       АКТИВНЫЕ СФЕРЫ 24Ч
+       ========================================================= */
+    function openSphereSheet(sphereId) {
+        const sp = state.localPosts.find(p => String(p.id) === String(sphereId) && p.type === 'sphere')
+            || state.localPosts.find(p => p.type === 'sphere');
+        if (!sp) return;
+        activeSphereId = sp.id;
+        document.getElementById('sdTitle').textContent = sp.sphereTopic || sp.title;
+        document.getElementById('sdSub').textContent = `Автор @${sp.username} · Осталось 23ч 40м`;
+        document.getElementById('sdContributionsList').innerHTML = (sp.items || []).map(it => `
+            <div class="p-3 rounded-2xl text-xs" style="background: var(--bg-card-subtle);">
+                <strong style="color: var(--accent-teal);">@${esc(it.author)}:</strong> ${esc(it.text)}
+            </div>
+        `).join('');
+        document.getElementById('sphereDetailSheet').classList.add('open');
+    }
+
+    function addMomentToActiveSphere() {
+        const input = document.getElementById('sdAddMomentInput');
+        const text = input.value.trim();
+        if (!text) return;
+        const sp = state.localPosts.find(p => p.id === activeSphereId);
+        if (sp) {
+            sp.items = sp.items || [];
+            sp.items.push({ author: state.currentUser ? state.currentUser.username : 'aimatov', text });
+            input.value = '';
+            saveAppState();
+            openSphereSheet(sp.id);
+            renderFeedCards();
+            showToast('Момент добавлен в Сферу');
+        }
+    }
+
+    function archiveActiveSphereNow() {
+        const idx = state.localPosts.findIndex(p => p.id === activeSphereId);
+        if (idx === -1) return;
+        const [sp] = state.localPosts.splice(idx, 1);
+        state.memoryCapsules.unshift({
+            id: Date.now(),
+            title: sp.sphereTopic || sp.title,
+            date: 'Завершено • Капсула воспоминаний',
+            count: (sp.items || []).length
+        });
+        saveAppState();
+        closeSheet('sphereDetailSheet');
+        renderHome();
+        showToast('Сфера переведена в Капсулу воспоминаний');
+    }
+
+    function openFullscreenVideo(postId) {
+        const v = getAllPosts().find(p => String(p.id) === String(postId));
+        if (!v) return;
+        document.getElementById('vfTitle').textContent = v.title;
+        document.getElementById('vfAuthor').textContent = `${v.authorName} (@${v.username})`;
+        document.getElementById('vfText').textContent = v.text;
+        document.getElementById('videoFullscreenModal').classList.add('open');
+    }
+
+    function addVideoToFirstSphere() {
+        const sp = state.localPosts.find(p => p.type === 'sphere');
+        if (sp) {
+            sp.items.push({ author: state.currentUser ? state.currentUser.username : 'aimatov', text: 'Добавлен вертикальный видео-момент 9:16' });
+            saveAppState();
+            renderFeedCards();
+        }
+        closeCenterModal('videoFullscreenModal');
+        showToast('Видео добавлено в Активную Сферу');
+    }
+
+    /* =========================================================
+       2. ОБЗОР
+       ========================================================= */
+    function renderExplorePage() {
+        const query = (document.getElementById('exploreSearchInput').value || '').toLowerCase();
+
+        document.getElementById('trendingTagsRow').innerHTML = ALL_TAGS.map(tag => {
+            const active = selectedTag === tag;
+            return `
+                <button onclick="selectedTag='${tag}'; renderExplorePage();" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border transition"
+                    style="${active
+                        ? 'background: rgba(22, 184, 166, 0.14); border-color: var(--accent-teal); color: var(--accent-teal);'
+                        : 'background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-secondary);'}">
+                    ${tag}
+                </button>
+            `;
+        }).join('');
+
+        const spheres = state.localPosts.filter(p => p.type === 'sphere');
+        const mapBox = document.getElementById('orbitMapNodes');
+        mapBox.innerHTML = spheres.map((s, i) => {
+            const coords = [{ x: 28, y: 32 }, { x: 72, y: 62 }][i % 2];
+            return `
+                <button onclick="openSphereSheet('${s.id}')" class="orbit-dot absolute -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
+                    style="left: ${coords.x}%; top: ${coords.y}%; background: var(--accent-teal); color: var(--accent-teal);">
+                    <span class="text-white">${(s.items || []).length}</span>
+                </button>
+            `;
+        }).join('');
+
+        const filteredAuthors = state.authors.filter(a =>
+            !query || a.name.toLowerCase().includes(query) || a.handle.toLowerCase().includes(query)
+        );
+        document.getElementById('recommendedAuthorsList').innerHTML = filteredAuthors.map(a => `
+            <div class="sfera-card p-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-11 h-11 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0" style="background: ${a.color};">
+                        ${a.initials}
+                    </div>
+                    <div class="min-w-0">
+                        <div class="font-bold text-sm truncate">${esc(a.name)}</div>
+                        <div class="text-xs truncate" style="color: var(--text-secondary);">${esc(a.handle)}</div>
+                    </div>
+                </div>
+                <button onclick="toggleFollowAuthor('${a.id}')" class="px-4 py-2 rounded-full text-xs font-bold shrink-0 transition"
+                    style="${a.subscribed
+                        ? 'background: var(--bg-card-subtle); color: var(--text-secondary);'
+                        : 'background: var(--accent-teal); color: #FFFFFF;'}">
+                    ${a.subscribed ? 'Подписка' : 'Подписаться'}
+                </button>
+            </div>
+        `).join('');
+    }
+
+    function toggleFollowAuthor(id) {
+        const a = state.authors.find(item => item.id === id);
+        if (!a) return;
+        a.subscribed = !a.subscribed;
+        saveAppState();
+        renderExplorePage();
+    }
+
+    /* =========================================================
+       3. ЧАТЫ
+       ========================================================= */
+    function renderChatsList() {
+        document.getElementById('chatsListContainer').classList.remove('hidden');
+        document.getElementById('chatRoomContainer').classList.add('hidden');
+
+        const list = Object.values(state.chats);
+        document.getElementById('chatThreadsList').innerHTML = list.map(c => `
+            <div onclick="openChatRoom('${c.id}')" class="sfera-card p-3.5 flex items-center justify-between gap-3 cursor-pointer active:scale-[0.99] transition">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-11 h-11 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0" style="background: ${c.color};">
+                        ${c.initials}
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-sm">${esc(c.name)}</span>
+                            <span class="text-[11px]" style="color: var(--text-secondary);">${esc(c.time)}</span>
+                        </div>
+                        <div class="text-xs truncate mt-0.5" style="color: var(--text-secondary);">${esc(c.preview)}</div>
+                    </div>
+                </div>
+                ${c.unread > 0 ? `<span class="w-5 h-5 rounded-full text-[11px] font-bold text-white flex items-center justify-center shrink-0" style="background: var(--accent-teal);">${c.unread}</span>` : ''}
+            </div>
+        `).join('');
+    }
+
+    function openChatRoom(chatId) {
+        activeChatId = chatId;
+        const c = state.chats[chatId];
+        if (!c) return;
+        c.unread = 0;
+        saveAppState();
+
+        document.getElementById('chatsListContainer').classList.add('hidden');
+        document.getElementById('chatRoomContainer').classList.remove('hidden');
+
+        document.getElementById('chatRoomAvatar').style.background = c.color;
+        document.getElementById('chatRoomAvatar').textContent = c.initials;
+        document.getElementById('chatRoomName').textContent = c.name;
+
+        updateE2EEUI();
+        renderChatRoomMessages();
+    }
+
+    function closeChatRoom() {
+        renderChatsList();
+    }
+
+    function toggleChatE2EE() {
+        const c = state.chats[activeChatId];
+        if (!c) return;
+        c.e2ee = !c.e2ee;
+        saveAppState();
+        updateE2EEUI();
+        showToast(c.e2ee ? 'Защищённый чат (E2EE) включён' : 'Обычный режим чата');
+    }
+
+    function updateE2EEUI() {
+        const c = state.chats[activeChatId];
+        const btn = document.getElementById('e2eeToggleBtn');
+        const txt = document.getElementById('e2eeBtnText');
+        const banner = document.getElementById('e2eeStatusBanner');
+
+        txt.textContent = c.e2ee ? 'E2EE: ВКЛ' : 'E2EE: ВЫКЛ';
+        btn.style.borderColor = c.e2ee ? 'var(--accent-teal)' : 'var(--border-subtle)';
+        btn.style.color = c.e2ee ? 'var(--accent-teal)' : 'var(--text-secondary)';
+        btn.style.background = c.e2ee ? 'rgba(22, 184, 166, 0.14)' : 'var(--bg-card-subtle)';
+        banner.classList.toggle('hidden', !c.e2ee);
+    }
+
+    function renderChatRoomMessages() {
+        const c = state.chats[activeChatId];
+        const box = document.getElementById('chatRoomMessages');
+        box.innerHTML = c.messages.map(m => {
+            const out = m.from === 'out';
+            return `
+                <div class="flex ${out ? 'justify-end' : 'justify-start'}">
+                    <div class="max-w-[80%] px-3.5 py-2.5 rounded-2xl text-xs leading-relaxed ${out ? 'text-white' : ''}"
+                        style="${out ? 'background: var(--accent-teal);' : 'background: var(--bg-card-subtle);'}">
+                        <div>${esc(m.text)}</div>
+                        ${m.encrypted ? `<div class="mt-1 text-[10px] font-mono opacity-80">${esc(m.cipher)}</div>` : ''}
+                        <div class="text-[9px] mt-1 opacity-75 text-right">${esc(m.time)}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function sendRoomMessage() {
+        const input = document.getElementById('chatMsgInput');
+        const text = input.value.trim();
+        if (!text) return;
+        const c = state.chats[activeChatId];
+        const cipher = c.e2ee ? 'AES-GCM: ' + btoa(unescape(encodeURIComponent(text))).slice(0, 18) + '==' : '';
+        c.messages.push({ from: 'out', text, time: 'Сейчас', encrypted: c.e2ee, cipher });
+        c.preview = text;
+        c.time = 'Сейчас';
+        input.value = '';
+        saveAppState();
+        renderChatRoomMessages();
+    }
+
+    /* =========================================================
+       4. ПРОФИЛЬ
+       ========================================================= */
+    function renderProfilePage() {
+        const u = state.currentUser || { username: 'user', displayName: 'Пользователь', isVerified: false, followers: '0' };
+        document.getElementById('profAvatar').textContent = u.displayName[0].toUpperCase();
+        document.getElementById('profDisplayName').textContent = u.displayName;
+        document.getElementById('profUsernameRow').innerHTML = renderUsernameWithFirst(u.username, u.isVerified, u.verifyReason);
+        document.getElementById('profFollowersCount').textContent = u.followers || '12.4K';
+        if (u.bio) document.getElementById('profBioText').textContent = u.bio;
+
+        const all = getAllPosts();
+        document.getElementById('profPostsCount').textContent = all.filter(p => p.username === u.username).length;
+        setProfileSubTab(currentProfSub);
+    }
+
+    function setProfileSubTab(sub) {
+        currentProfSub = sub;
+        document.querySelectorAll('.prof-subtab').forEach(btn => {
+            const active = btn.getAttribute('data-ptab') === sub;
+            btn.style.color = active ? 'var(--text-primary)' : 'var(--text-secondary)';
+            btn.querySelector('.ptab-line').classList.toggle('hidden', !active);
+        });
+
+        const box = document.getElementById('profileSubContent');
+        if (sub === 'memories') {
+            box.innerHTML = state.memoryCapsules.map(m => `
+                <div class="sfera-card p-4 flex items-center justify-between">
+                    <div>
+                        <div class="text-sm font-bold">${esc(m.title)}</div>
+                        <div class="text-xs mt-0.5" style="color: var(--accent-teal);">${esc(m.date)} · ${m.count} моментов</div>
+                    </div>
+                    <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: var(--bg-card-subtle);">Архив</span>
+                </div>
+            `).join('');
+        } else {
+            const all = getAllPosts();
+            const me = state.currentUser ? state.currentUser.username : '';
+            const list = sub === 'saved'
+                ? all.filter(p => p.saved)
+                : all.filter(p => p.username === me);
+
+            box.innerHTML = list.map(p => `
+                <div class="sfera-card p-4">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs font-bold">${esc(p.authorName)}</span>
+                        <span class="text-[11px]" style="color: var(--text-secondary);">${esc(p.time)}</span>
+                    </div>
+                    ${p.title ? `<div class="text-sm font-extrabold mb-1">${esc(p.title)}</div>` : ''}
+                    <p class="text-xs leading-relaxed mb-2.5" style="color: var(--text-secondary);">${esc(p.text)}</p>
+                    <div class="flex items-center justify-between text-[11px]">
+                        <span style="color: var(--text-secondary);">Нравится ${p.likesCount || 0} · Комментарии ${(p.comments || []).length}</span>
+                        ${p.saved ? `<span class="font-bold" style="color: var(--accent-teal);">В сохранённом</span>` : ''}
+                    </div>
+                </div>
+            `).join('') || `<div class="text-center text-xs py-6" style="color: var(--text-secondary);">Пусто</div>`;
+        }
+    }
+
+    function simulate1MFollowers() {
+        if (!state.currentUser) return;
+        state.currentUser.followers = '1.0M';
+        state.currentUser.isVerified = true;
+        state.currentUser.verifyReason = 'Автоматически присвоено при достижении 1 000 000+ подписчиков.';
+        saveAppState();
+        renderProfilePage();
+        showToast('Бейдж FIRST активирован');
+    }
+
+    function simulateSupportVerify() {
+        if (!state.currentUser) return;
+        state.currentUser.isVerified = true;
+        state.currentUser.verifyReason = 'Официальный аккаунт подтверждён поддержкой @support.';
+        saveAppState();
+        renderProfilePage();
+        showToast('Поддержка @support выдала бейдж FIRST');
+    }
+
+    /* =========================================================
+       УВЕДОМЛЕНИЯ И АВТОРИЗАЦИЯ ЧЕРЕЗ БЭКЕНД RENDER
+       ========================================================= */
+    function toggleNotifSheet() {
+        document.getElementById('notifDot').classList.add('hidden');
+        document.getElementById('notifSheetList').innerHTML = state.notifications.map(n => `
+            <div class="p-3 rounded-2xl text-xs" style="background: var(--bg-card-subtle);">
+                <div>${esc(n.text)}</div>
+                <div class="text-[10px] mt-1" style="color: var(--text-secondary);">${esc(n.time)}</div>
+            </div>
+        `).join('');
+        document.getElementById('notifSheet').classList.add('open');
+    }
+
+    function setAuthTab(tab) {
+        const isLogin = tab === 'login';
+        document.getElementById('btnTabLogin').style.background = isLogin ? 'var(--bg-card)' : 'transparent';
+        document.getElementById('btnTabReg').style.background = !isLogin ? 'var(--bg-card)' : 'transparent';
+        document.getElementById('formLogin').classList.toggle('hidden', !isLogin);
+        document.getElementById('formReg1').classList.toggle('hidden', isLogin);
+    }
+
+    function checkUsernameAvailability() {
+        const clean = document.getElementById('regUser').value.trim().replace(/^@+/, '').toLowerCase();
+        const st = document.getElementById('regUserStatus');
+        if (!clean) { st.textContent = ''; return false; }
+        if (!/^[a-z0-9_]{3,24}$/.test(clean)) {
+            st.style.color = '#F43F5E';
+            st.textContent = 'Только латиница a-z, цифры и _ (3–24 символа)';
+            return false;
+        }
+        if (RESERVED_USERNAMES.includes(clean)) {
+            st.style.color = '#F43F5E';
+            st.textContent = `Юзернейм @${clean} зарезервирован системой`;
+            return false;
+        }
+        st.style.color = '#16B8A6';
+        st.textContent = `@${clean} доступен`;
+        return true;
+    }
+
+    async function submitRegister() {
+        const errEl = document.getElementById('regErr1');
+        errEl.textContent = '';
+        if (!checkUsernameAvailability()) {
+            errEl.textContent = 'Проверьте корректность юзернейма.';
+            return;
+        }
+        const username = document.getElementById('regUser').value.trim().replace(/^@+/, '').toLowerCase();
+        const displayName = document.getElementById('regName').value.trim() || username;
+        const email = document.getElementById('regEmail').value.trim();
+        const password = document.getElementById('regPass').value;
+
+        if (!email || password.length < 6) {
+            errEl.textContent = 'Укажите email и пароль от 6 символов.';
+            return;
+        }
+
+        const btn = document.getElementById('btnSubmitReg');
+        btn.disabled = true;
+        try {
+            const res = await apiRequest('/api/register', {
+                method: 'POST',
+                body: JSON.stringify({ email, username, password, display_name: displayName })
+            });
+            authToken = res.token;
+            localStorage.setItem('sfera_token', authToken);
+            await enterAuthorizedApp(res.user);
+            showToast(`Добро пожаловать, @${res.user.username}!`);
+        } catch (err) {
+            errEl.textContent = err.message;
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    async function submitLogin() {
+        const errEl = document.getElementById('loginErr');
+        errEl.textContent = '';
+        const login = document.getElementById('loginUser').value.trim();
+        const password = document.getElementById('loginPass').value;
+        if (!login || !password) {
+            errEl.textContent = 'Введите логин и пароль.';
+            return;
+        }
+
+        const btn = document.getElementById('btnSubmitLogin');
+        btn.disabled = true;
+        try {
+            const res = await apiRequest('/api/login', {
+                method: 'POST',
+                body: JSON.stringify({ login, password })
+            });
+            authToken = res.token;
+            localStorage.setItem('sfera_token', authToken);
+            await enterAuthorizedApp(res.user);
+            showToast(`Вход выполнен: @${res.user.username}`);
+        } catch (err) {
+            errEl.textContent = err.message;
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    async function logoutAccount() {
+        try { await apiRequest('/api/logout', { method: 'POST' }); } catch (_) {}
+        authToken = '';
+        state.currentUser = null;
+        localStorage.removeItem('sfera_token');
+        saveAppState();
+        document.getElementById('mainAppView').classList.add('hidden');
+        document.getElementById('authView').classList.remove('hidden');
+        setAuthTab('login');
+    }
+
+    async function fetchServerPosts() {
+        try {
+            const res = await apiRequest('/api/posts');
+            state.serverPosts = res.posts || [];
+            saveAppState();
+        } catch (_) {}
+    }
+
+    async function enterAuthorizedApp(serverUser) {
+        state.currentUser = {
+            username: serverUser.username,
+            displayName: serverUser.display_name || serverUser.username,
+            bio: serverUser.bio || '',
+            isVerified: serverUser.username === 'aimatov',
+            verifyReason: 'Официальный аккаунт • Подтверждено SFERA.',
+            followers: '12.4K',
+            following: 184
+        };
+        saveAppState();
+        document.getElementById('authView').classList.add('hidden');
+        document.getElementById('mainAppView').classList.remove('hidden');
+        await fetchServerPosts();
+        switchTab('home');
+    }
+
+    // Инициализация
+    applyTheme();
+    setAuthTab('login');
+
+    if (authToken) {
+        apiRequest('/api/me')
+            .then(res => enterAuthorizedApp(res.user))
+            .catch(() => {
+                authToken = '';
+                localStorage.removeItem('sfera_token');
+            });
+    }
+</script>
 </body>
 </html>
