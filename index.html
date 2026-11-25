@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SFERA — Alfa 1.2 | Одна сфера. Миллион историй.</title>
+    <title>SFERA — Beta 1.0 Inch | Одна сфера. Миллион историй.</title>
     <link rel="icon" type="image/png" href="sfera.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#16B8A6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Sfera">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,9 +39,6 @@
             --text-muted: #9A9083;
             --shadow-card: 0 3px 16px rgba(58, 46, 32, 0.06);
             --shadow-sheet: 0 -10px 40px rgba(58, 46, 32, 0.14);
-            --badge-bg: rgba(22, 184, 166, 0.14);
-            --badge-border: rgba(22, 184, 166, 0.45);
-            --badge-text: #0F766E;
             --glow-opacity: 0.48;
         }
 
@@ -56,9 +57,6 @@
             --text-muted: #5C6F8A;
             --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.25);
             --shadow-sheet: 0 -12px 44px rgba(0, 0, 0, 0.55);
-            --badge-bg: rgba(56, 189, 248, 0.12);
-            --badge-border: rgba(56, 189, 248, 0.72);
-            --badge-text: #38BDF8;
             --glow-opacity: 0.42;
         }
 
@@ -244,12 +242,26 @@
             border-top: 1px solid var(--border-subtle);
             transform: translateY(100%);
             transition: transform 0.32s var(--ease-smooth);
-            max-height: 88vh;
+            max-height: 90vh;
             overflow-y: auto;
         }
 
         .sheet-backdrop.open .sheet-panel {
             transform: translateY(0);
+        }
+
+        .swatch-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 9999px;
+            border: 2px solid transparent;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+            cursor: pointer;
+        }
+
+        .swatch-btn.active {
+            border-color: var(--text-primary);
+            transform: scale(1.12);
         }
     </style>
 </head>
@@ -268,7 +280,7 @@
                     <img src="sfera.png" alt="SFERA" onerror="this.outerHTML='<svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2.1&quot;><circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;9&quot;/><line x1=&quot;3&quot; y1=&quot;12&quot; x2=&quot;21&quot; y2=&quot;12&quot;/><path d=&quot;M12 3a14.5 14.5 0 0 0 0 18 14.5 14.5 0 0 0 0-18&quot;/></svg>'">
                 </div>
                 <span class="font-extrabold text-lg tracking-tight">SFERA</span>
-                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full" style="background: var(--bg-card-subtle); color: var(--text-secondary);">Alfa 1.2</span>
+                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full" style="background: var(--bg-card-subtle); color: var(--text-secondary);">Beta 1.0 Inch</span>
             </div>
             <button onclick="toggleTheme()" class="w-9 h-9 rounded-full flex items-center justify-center" style="background: var(--bg-card); border: 1px solid var(--border-subtle);" title="Сменить тему">
                 <span class="theme-icon-slot"></span>
@@ -326,7 +338,7 @@
         </div>
 
         <div class="text-center text-[11px]" style="color: var(--text-muted);">
-            SFERA Alfa 1.2 • Aimatov Silver Group
+            SFERA Beta 1.0 Inch • Aimatov Silver Group
         </div>
     </section>
 
@@ -347,7 +359,7 @@
                             <img src="sfera.png" alt="SFERA" onerror="this.outerHTML='<svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2.1&quot;><circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;9&quot;/><line x1=&quot;3&quot; y1=&quot;12&quot; x2=&quot;21&quot; y2=&quot;12&quot;/><path d=&quot;M12 3a14.5 14.5 0 0 0 0 18 14.5 14.5 0 0 0 0-18&quot;/></svg>'">
                         </div>
                         <span class="font-extrabold text-[18px] tracking-tight">SFERA</span>
-                        <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full" style="background: var(--bg-card-subtle); color: var(--text-secondary);">Alfa 1.2</span>
+                        <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full" style="background: var(--bg-card-subtle); color: var(--text-secondary);">Beta 1.0</span>
                     </div>
 
                     <div class="flex items-center gap-1.5">
@@ -363,7 +375,7 @@
                             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                         </button>
 
-                        <button onclick="switchTab('profile')" class="w-9 h-9 rounded-full flex items-center justify-center text-white shadow-sm transition active:scale-95" style="background: var(--accent-violet);" title="Профиль">
+                        <button onclick="switchTab('profile')" class="w-9 h-9 rounded-full flex items-center justify-center text-white shadow-sm transition active:scale-95" id="topProfileBtn" style="background: var(--accent-violet);" title="Профиль">
                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                         </button>
                     </div>
@@ -374,8 +386,8 @@
                         <span>Для вас</span>
                         <span class="tab-underline absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-[2.5px] rounded-full transition-opacity" style="background: var(--accent-teal);"></span>
                     </button>
-                    <button onclick="setFeedSubTab('mine')" data-ftab="mine" class="feed-subtab py-2.5 text-[13px] font-semibold relative transition">
-                        <span>Мои</span>
+                    <button onclick="setFeedSubTab('following')" data-ftab="following" class="feed-subtab py-2.5 text-[13px] font-semibold relative transition">
+                        <span>Подписки</span>
                         <span class="tab-underline hidden absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-[2.5px] rounded-full transition-opacity" style="background: var(--accent-teal);"></span>
                     </button>
                     <button onclick="setFeedSubTab('popular')" data-ftab="popular" class="feed-subtab py-2.5 text-[13px] font-semibold relative transition">
@@ -399,7 +411,7 @@
                     <button onclick="openCreateSheet('post')" class="flex-1 text-left px-4 py-2.5 rounded-full text-[13px] transition" style="background: var(--bg-input); color: var(--text-secondary);">
                         Что нового?
                     </button>
-                    <button onclick="openCreateSheet('sphere')" class="w-9 h-9 rounded-xl flex items-center justify-center transition" style="color: var(--text-secondary);" title="Новая Сфера 24ч">
+                    <button onclick="openCreateSheet('media')" class="w-9 h-9 rounded-xl flex items-center justify-center transition" style="color: var(--text-secondary);" title="Фото или видео">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                     </button>
                 </div>
@@ -429,54 +441,78 @@
 
             <!-- 3. ЧАТЫ -->
             <section id="tab-chats" class="page-tab hidden p-4">
-                <div class="flex items-center justify-between mb-3.5">
-                    <h2 class="text-xl font-extrabold tracking-tight">Сообщения</h2>
-                </div>
-                <div class="sfera-card p-6 text-center space-y-2">
-                    <div class="w-12 h-12 mx-auto rounded-2xl flex items-center justify-center" style="background: var(--bg-card-subtle); color: var(--accent-teal);">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <div id="chatsListContainer">
+                    <div class="flex items-center justify-between mb-3.5">
+                        <h2 class="text-xl font-extrabold tracking-tight">Сообщения</h2>
+                        <button onclick="loadChatsList()" class="text-xs font-semibold px-3 py-1 rounded-full" style="background: var(--bg-card-subtle); color: var(--text-secondary);">Обновить</button>
                     </div>
-                    <div class="text-sm font-bold">Личных диалогов пока нет</div>
-                    <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
-                        Здесь будут отображаться переписки с реальными пользователями SFERA после подключения модуля сообщений на сервере.
-                    </p>
+                    <div id="chatThreadsList" class="space-y-2.5"></div>
+                </div>
+
+                <div id="chatRoomContainer" class="hidden sfera-card overflow-hidden flex flex-col" style="height: calc(100vh - 175px); min-height: 420px;">
+                    <div class="p-3.5 border-b flex items-center justify-between gap-2" style="border-color: var(--border-subtle);">
+                        <div class="flex items-center gap-2.5 min-w-0 cursor-pointer" onclick="openUserProfileSheet(activeChatUsername)">
+                            <button onclick="event.stopPropagation(); closeChatRoom()" class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background: var(--bg-card-subtle);">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+                            </button>
+                            <div id="chatRoomAvatar" class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white shrink-0" style="background: var(--accent-teal);"></div>
+                            <div class="min-w-0">
+                                <div id="chatRoomName" class="text-sm font-bold truncate"></div>
+                                <div id="chatRoomSub" class="text-[11px]" style="color: var(--text-secondary);"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="chatRoomMessages" class="flex-1 p-3.5 space-y-2.5 overflow-y-auto no-scrollbar"></div>
+
+                    <div class="p-3 border-t flex items-center gap-2" style="border-color: var(--border-subtle);">
+                        <input id="chatMsgInput" type="text" class="sfera-input py-2.5 text-xs sm:text-sm" placeholder="Написать сообщение..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+                        <button id="btnSendChatMsg" onclick="sendChatMessage()" class="px-4 py-2.5 rounded-full text-xs font-bold text-white shrink-0" style="background: var(--accent-teal);">
+                            Отправить
+                        </button>
+                    </div>
                 </div>
             </section>
 
-            <!-- 4. ПРОФИЛЬ (БЕЗ ВТОРОГО ПЕРЕКЛЮЧАТЕЛЯ ТЕМЫ) -->
+            <!-- 4. ПРОФИЛЬ (БЕЗ ВТОРОГО ПЕРЕКЛЮЧАТЕЛЯ ТЕМЫ + НАСТРОЙКА ВНЕШНЕГО ВИДА) -->
             <section id="tab-profile" class="page-tab hidden p-4 space-y-4">
-                <div class="sfera-card p-5">
-                    <div class="flex items-start justify-between gap-3 mb-4">
-                        <div class="flex items-center gap-3.5">
-                            <div id="profAvatar" class="w-16 h-20 rounded-[28px] flex items-center justify-center text-2xl font-extrabold text-white shrink-0 shadow-sm" style="background: var(--accent-violet);">S</div>
+                <div class="sfera-card overflow-hidden">
+                    <!-- Баннер оформления профиля -->
+                    <div id="profBanner" class="h-24 w-full relative" style="background: linear-gradient(135deg, #16B8A6 0%, #38BDF8 55%, #8294FF 100%);"></div>
+
+                    <div class="p-5 -mt-10 relative">
+                        <div class="flex items-end justify-between gap-3 mb-3">
+                            <div id="profAvatar" class="w-16 h-16 rounded-[22px] flex items-center justify-center text-2xl font-extrabold text-white shrink-0 shadow-md border-4" style="background: var(--accent-violet); border-color: var(--bg-card);">S</div>
+                            <button onclick="openEditProfileSheet()" class="px-3.5 py-2 rounded-2xl text-xs font-semibold border shrink-0 transition" style="background: var(--bg-card-subtle); border-color: var(--border-subtle);">
+                                Настроить профиль
+                            </button>
+                        </div>
+
+                        <h2 id="profDisplayName" class="text-lg font-extrabold leading-tight">Пользователь</h2>
+                        <div id="profUsernameRow" class="text-xs font-semibold mt-0.5" style="color: var(--text-secondary);">@username</div>
+
+                        <p id="profBioText" class="text-[13px] leading-relaxed my-3.5" style="color: var(--text-primary);">
+                            Описание профиля пока не заполнено.
+                        </p>
+
+                        <div class="grid grid-cols-3 text-center pt-3 border-t" style="border-color: var(--border-subtle);">
                             <div>
-                                <h2 id="profDisplayName" class="text-lg font-extrabold leading-tight">Пользователь</h2>
-                                <div id="profUsernameRow" class="text-xs font-semibold mt-1" style="color: var(--text-secondary);">@username</div>
+                                <div id="profPostsCount" class="text-base font-extrabold">0</div>
+                                <div class="text-[11px]" style="color: var(--text-secondary);">Публикации</div>
+                            </div>
+                            <div>
+                                <div id="profFollowersCount" class="text-base font-extrabold">0</div>
+                                <div class="text-[11px]" style="color: var(--text-secondary);">Подписчики</div>
+                            </div>
+                            <div>
+                                <div id="profFollowingCount" class="text-base font-extrabold">0</div>
+                                <div class="text-[11px]" style="color: var(--text-secondary);">Подписки</div>
                             </div>
                         </div>
 
-                        <button onclick="openEditProfileSheet()" class="px-3.5 py-2 rounded-2xl text-xs font-semibold border shrink-0 transition" style="background: var(--bg-card-subtle); border-color: var(--border-subtle);">
-                            Редактировать
-                        </button>
-                    </div>
-
-                    <p id="profBioText" class="text-[13px] leading-relaxed mb-4" style="color: var(--text-secondary);">
-                        Описание профиля пока не заполнено.
-                    </p>
-
-                    <div class="grid grid-cols-2 text-center pt-3 border-t" style="border-color: var(--border-subtle);">
-                        <div>
-                            <div id="profPostsCount" class="text-base font-extrabold">0</div>
-                            <div class="text-[11px]" style="color: var(--text-secondary);">Публикации</div>
+                        <div class="mt-4 pt-3 border-t flex justify-end" style="border-color: var(--border-subtle);">
+                            <button onclick="logoutAccount()" class="text-xs font-semibold text-rose-500">Выйти из аккаунта</button>
                         </div>
-                        <div>
-                            <div id="profSavedCount" class="text-base font-extrabold">0</div>
-                            <div class="text-[11px]" style="color: var(--text-secondary);">Сохранённое</div>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 pt-3 border-t flex justify-end" style="border-color: var(--border-subtle);">
-                        <button onclick="logoutAccount()" class="text-xs font-semibold text-rose-500">Выйти из аккаунта</button>
                     </div>
                 </div>
 
@@ -539,29 +575,44 @@
 
 </div>
 
-<!-- ШТОРКА: НОВАЯ ПУБЛИКАЦИЯ -->
+<!-- ШТОРКА 1: НОВАЯ ПУБЛИКАЦИЯ (ФОТО / ВИДЕО / ПОДПИСЬ) -->
 <div id="createSheet" class="sheet-backdrop" onclick="if(event.target===this) closeSheet('createSheet')">
     <div class="sheet-panel p-5 pb-7">
         <div class="flex items-start justify-between mb-1">
             <div>
                 <h3 class="text-lg font-extrabold">Новая публикация</h3>
-                <p class="text-xs mt-0.5" style="color: var(--text-secondary);">Поделитесь тем, что у вас происходит</p>
+                <p class="text-xs mt-0.5" style="color: var(--text-secondary);">Текст, фото или видео</p>
             </div>
             <button onclick="closeSheet('createSheet')" class="w-9 h-9 rounded-full flex items-center justify-center" style="background: var(--bg-card-subtle); color: var(--text-secondary);">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
 
-        <textarea id="createTextarea" rows="4" class="sfera-input mt-3.5 mb-3.5 resize-none" placeholder="О чём хотите рассказать?"></textarea>
+        <textarea id="createTextarea" rows="4" class="sfera-input mt-3.5 mb-3 resize-none" placeholder="О чём хотите рассказать?"></textarea>
 
-        <div class="grid grid-cols-2 gap-2.5 mb-4">
-            <button type="button" onclick="selectCreateMode('post')" data-cmode="post" class="create-mode-pill px-3.5 py-2.5 rounded-2xl text-xs font-semibold flex items-center gap-2.5 border transition">
-                <svg style="color: var(--accent-teal);" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                <span>Обычный пост</span>
+        <!-- Предпросмотр выбранного фото/видео -->
+        <div id="mediaPreviewWrap" class="hidden mb-3 relative rounded-2xl overflow-hidden border" style="border-color: var(--border-subtle);">
+            <div id="mediaPreviewContent"></div>
+            <button type="button" onclick="clearSelectedMedia()" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <input id="mediaFileInput" type="file" accept="image/*,video/*" class="hidden" onchange="handleMediaFileSelect(this)">
+
+        <div class="grid grid-cols-3 gap-2 mb-4">
+            <button type="button" onclick="selectCreateMode('post')" data-cmode="post" class="create-mode-pill px-3 py-2.5 rounded-2xl text-xs font-semibold flex items-center justify-center gap-1.5 border transition">
+                <svg style="color: var(--accent-teal);" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                <span>Пост</span>
             </button>
 
-            <button type="button" onclick="selectCreateMode('sphere')" data-cmode="sphere" class="create-mode-pill px-3.5 py-2.5 rounded-2xl text-xs font-semibold flex items-center gap-2.5 border transition">
-                <svg style="color: var(--accent-violet);" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+            <button type="button" onclick="document.getElementById('mediaFileInput').click()" class="px-3 py-2.5 rounded-2xl text-xs font-semibold flex items-center justify-center gap-1.5 border transition" style="background: var(--bg-card-subtle); border-color: transparent;">
+                <svg style="color: #38BDF8;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Фото/Видео</span>
+            </button>
+
+            <button type="button" onclick="selectCreateMode('sphere')" data-cmode="sphere" class="create-mode-pill px-3 py-2.5 rounded-2xl text-xs font-semibold flex items-center justify-center gap-1.5 border transition">
+                <svg style="color: var(--accent-violet);" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
                 <span>Сфера 24ч</span>
             </button>
         </div>
@@ -574,16 +625,81 @@
     </div>
 </div>
 
-<!-- ШТОРКА: РЕДАКТИРОВАНИЕ ПРОФИЛЯ -->
+<!-- ШТОРКА 2: ПУБЛИЧНАЯ СТРАНИЦА АККАУНТА (ПО КЛИКУ НА ПОСТ / АВТОРА) -->
+<div id="userProfileSheet" class="sheet-backdrop" onclick="if(event.target===this) closeSheet('userProfileSheet')">
+    <div class="sheet-panel pb-7 overflow-hidden">
+        <div id="pubUserBanner" class="h-24 w-full relative" style="background: linear-gradient(135deg, #16B8A6 0%, #38BDF8 55%, #8294FF 100%);">
+            <button onclick="closeSheet('userProfileSheet')" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/35 text-white flex items-center justify-center backdrop-blur-md">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="px-5 -mt-10 relative">
+            <div id="pubUserAvatar" class="w-16 h-16 rounded-[22px] flex items-center justify-center text-2xl font-extrabold text-white shadow-md border-4 mb-2.5" style="background: var(--accent-teal); border-color: var(--bg-sheet);">U</div>
+            <h3 id="pubUserName" class="text-lg font-extrabold leading-tight">Пользователь</h3>
+            <div id="pubUserHandle" class="text-xs font-semibold mt-0.5" style="color: var(--text-secondary);">@username</div>
+            <p id="pubUserBio" class="text-xs leading-relaxed my-3" style="color: var(--text-primary);"></p>
+
+            <div class="grid grid-cols-3 text-center py-2.5 mb-3.5 rounded-2xl" style="background: var(--bg-card-subtle);">
+                <div>
+                    <div id="pubUserPostsCount" class="text-sm font-extrabold">0</div>
+                    <div class="text-[10px]" style="color: var(--text-secondary);">Публикации</div>
+                </div>
+                <div>
+                    <div id="pubUserFollowersCount" class="text-sm font-extrabold">0</div>
+                    <div class="text-[10px]" style="color: var(--text-secondary);">Подписчики</div>
+                </div>
+                <div>
+                    <div id="pubUserFollowingCount" class="text-sm font-extrabold">0</div>
+                    <div class="text-[10px]" style="color: var(--text-secondary);">Подписки</div>
+                </div>
+            </div>
+
+            <div id="pubUserActions" class="grid grid-cols-2 gap-2.5 mb-4">
+                <button id="btnFollowUser" onclick="toggleFollowPublicUser()" class="py-2.5 rounded-full text-xs font-bold text-white transition" style="background: var(--accent-teal);">
+                    Подписаться
+                </button>
+                <button id="btnStartChatUser" onclick="startChatWithPublicUser()" class="py-2.5 rounded-full text-xs font-bold border transition" style="background: var(--bg-card-subtle); border-color: var(--border-subtle);">
+                    Начать чат
+                </button>
+            </div>
+
+            <h4 class="text-xs font-bold uppercase tracking-wider mb-2.5" style="color: var(--text-secondary);">Публикации</h4>
+            <div id="pubUserPostsList" class="space-y-2.5"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ШТОРКА 3: КОММЕНТАРИИ -->
+<div id="commentsSheet" class="sheet-backdrop" onclick="if(event.target===this) closeSheet('commentsSheet')">
+    <div class="sheet-panel p-5 pb-7">
+        <div class="flex items-center justify-between mb-3.5">
+            <h3 class="text-base font-extrabold">Комментарии</h3>
+            <button onclick="closeSheet('commentsSheet')" class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--bg-card-subtle); color: var(--text-secondary);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <div id="commentsSheetList" class="space-y-2.5 max-h-[46vh] overflow-y-auto no-scrollbar mb-4"></div>
+
+        <div class="flex items-center gap-2 pt-2 border-t" style="border-color: var(--border-subtle);">
+            <input id="newCommentInput" type="text" class="sfera-input rounded-full py-2.5 text-xs" placeholder="Написать комментарий..." onkeydown="if(event.key==='Enter') postNewComment()">
+            <button id="btnSendComment" onclick="postNewComment()" class="px-5 py-2.5 rounded-full text-xs font-bold text-white shrink-0" style="background: var(--accent-teal);">
+                Отправить
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ШТОРКА 4: НАСТРОЙКА ВНЕШНЕГО ВИДА ПРОФИЛЯ -->
 <div id="editProfileSheet" class="sheet-backdrop" onclick="if(event.target===this) closeSheet('editProfileSheet')">
     <div class="sheet-panel p-5 pb-7">
         <div class="flex items-center justify-between mb-3.5">
-            <h3 class="text-base font-extrabold">Редактирование профиля</h3>
+            <h3 class="text-base font-extrabold">Настройка профиля</h3>
             <button onclick="closeSheet('editProfileSheet')" class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--bg-card-subtle); color: var(--text-secondary);">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
-        <div class="space-y-3">
+        <div class="space-y-3.5">
             <div>
                 <label class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Имя</label>
                 <input id="editNameInput" type="text" class="sfera-input" maxlength="50">
@@ -592,14 +708,22 @@
                 <label class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">О себе</label>
                 <textarea id="editBioInput" rows="3" class="sfera-input resize-none" maxlength="200" placeholder="Коротко о себе..."></textarea>
             </div>
+            <div>
+                <label class="block text-xs font-medium mb-2" style="color: var(--text-secondary);">Цвет аватара</label>
+                <div id="avatarColorSwatches" class="flex items-center gap-2.5 flex-wrap"></div>
+            </div>
+            <div>
+                <label class="block text-xs font-medium mb-2" style="color: var(--text-secondary);">Шапка профиля</label>
+                <div id="bannerSwatches" class="grid grid-cols-4 gap-2"></div>
+            </div>
             <button id="btnSaveProfile" onclick="saveProfileChanges()" class="w-full py-3 rounded-full text-xs font-bold text-white" style="background: var(--accent-teal);">
-                Сохранить
+                Сохранить изменения
             </button>
         </div>
     </div>
 </div>
 
-<!-- ШТОРКА: УВЕДОМЛЕНИЯ -->
+<!-- ШТОРКА 5: УВЕДОМЛЕНИЯ -->
 <div id="notifSheet" class="sheet-backdrop" onclick="if(event.target===this) closeSheet('notifSheet')">
     <div class="sheet-panel p-5 pb-7">
         <div class="flex items-center justify-between mb-3">
@@ -623,6 +747,14 @@
     const API_BASE = 'https://sfera-server.onrender.com';
     const RESERVED_USERNAMES = ['asg', 'sfera', 'suport'];
 
+    const AVATAR_COLORS = ['#8294FF', '#16B8A6', '#38BDF8', '#0F766E', '#6366F1', '#EC4899', '#F59E0B', '#1F2937'];
+    const BANNER_GRADIENTS = [
+        'linear-gradient(135deg, #16B8A6 0%, #38BDF8 55%, #8294FF 100%)',
+        'linear-gradient(135deg, #0F766E 0%, #16B8A6 100%)',
+        'linear-gradient(135deg, #4F46E5 0%, #8294FF 55%, #38BDF8 100%)',
+        'linear-gradient(135deg, #111827 0%, #1E293B 60%, #0D9488 100%)'
+    ];
+
     let authToken = localStorage.getItem('sfera_token') || '';
     let currentUser = null;
     let serverPosts = [];
@@ -633,8 +765,18 @@
     let currentProfSub = 'posts';
     let createMode = 'post';
 
+    let selectedMediaFile = null;
+    let activeCommentsPostId = null;
+    let activePublicUser = null;
+    let activeChatUsername = null;
+    let chatPollTimer = null;
+
+    let editSelectedAvatarColor = AVATAR_COLORS[0];
+    let editSelectedBanner = BANNER_GRADIENTS[0];
+
     async function apiRequest(path, options = {}) {
-        const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+        const isFormData = options.body instanceof FormData;
+        const headers = isFormData ? { ...(options.headers || {}) } : { 'Content-Type': 'application/json', ...(options.headers || {}) };
         if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
         const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
         const data = await res.json().catch(() => ({}));
@@ -666,6 +808,12 @@
         return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
     }
 
+    function resolveMediaUrl(url) {
+        if (!url) return '';
+        if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
+        return `${API_BASE}${url.startsWith('/') ? '' : '/'}${url}`;
+    }
+
     /* ==================== ТЕМА ==================== */
     function applyTheme() {
         document.documentElement.setAttribute('data-theme', currentTheme);
@@ -685,6 +833,8 @@
     /* ==================== НАВИГАЦИЯ ==================== */
     function switchTab(tab, focusSearch = false) {
         currentTab = tab;
+        if (tab !== 'chats') stopChatPolling();
+
         document.querySelectorAll('.page-tab').forEach(sec => sec.classList.add('hidden'));
         document.getElementById('tab-' + tab).classList.remove('hidden');
         document.getElementById('homeFeedTabsBar').classList.toggle('hidden', tab !== 'home');
@@ -698,6 +848,9 @@
         if (tab === 'explore') {
             renderExplorePosts();
             if (focusSearch) setTimeout(() => document.getElementById('exploreSearchInput').focus(), 100);
+        }
+        if (tab === 'chats') {
+            if (!activeChatUsername) loadChatsList();
         }
         if (tab === 'profile') renderProfilePage();
     }
@@ -735,10 +888,11 @@
         const realSpheresHtml = spherePosts.map(p => {
             const name = p.display_name || p.username;
             const initials = name[0].toUpperCase();
+            const color = p.avatar_color || 'var(--accent-violet)';
             return `
-                <button onclick="showToast('${esc(p.content.replace(/^\[Сфера 24ч\]\s*/, ''))}')" class="flex flex-col items-center gap-1.5 shrink-0">
+                <button onclick="openUserProfileSheet('${esc(p.username)}')" class="flex flex-col items-center gap-1.5 shrink-0">
                     <div class="w-14 h-14 rounded-full p-[2.5px]" style="border: 2px solid var(--accent-teal);">
-                        <div class="w-full h-full rounded-full flex items-center justify-center text-white font-bold text-sm" style="background: var(--accent-violet);">
+                        <div class="w-full h-full rounded-full flex items-center justify-center text-white font-bold text-sm" style="background: ${esc(color)};">
                             ${esc(initials)}
                         </div>
                     </div>
@@ -755,14 +909,25 @@
         const initials = name[0].toUpperCase();
         const isMine = currentUser && p.username === currentUser.username;
         const isSphere = (p.content || '').startsWith('[Сфера 24ч]');
-        const cleanText = isSphere ? p.content.replace(/^\[Сфера 24ч\]\s*/, '') : p.content;
+        const cleanText = isSphere ? p.content.replace(/^\[Сфера 24ч\]\s*/, '') : (p.content || '');
         const isSaved = savedIds.includes(p.id);
+        const avatarColor = p.avatar_color || (isMine ? 'var(--accent-violet)' : 'var(--accent-teal)');
+
+        let mediaHtml = '';
+        if (p.media_url) {
+            const fullUrl = resolveMediaUrl(p.media_url);
+            if (p.media_type === 'video') {
+                mediaHtml = `<div class="mt-3 rounded-2xl overflow-hidden bg-black"><video src="${esc(fullUrl)}" controls playsinline class="w-full max-h-[380px] object-contain"></video></div>`;
+            } else {
+                mediaHtml = `<div class="mt-3 rounded-2xl overflow-hidden"><img src="${esc(fullUrl)}" alt="Медиа" class="w-full max-h-[380px] object-cover" loading="lazy"></div>`;
+            }
+        }
 
         return `
             <article class="sfera-card p-4">
                 <div class="flex items-start justify-between gap-2 mb-2.5">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0" style="background: ${isMine ? 'var(--accent-violet)' : 'var(--accent-teal)'};">
+                    <div class="flex items-center gap-3 cursor-pointer" onclick="openUserProfileSheet('${esc(p.username)}')">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0" style="background: ${esc(avatarColor)};">
                             ${esc(initials)}
                         </div>
                         <div>
@@ -783,7 +948,8 @@
                     </div>
                 </div>
 
-                <p class="text-[14px] leading-relaxed whitespace-pre-wrap break-words" style="color: var(--text-primary);">${esc(cleanText)}</p>
+                ${cleanText ? `<p class="text-[14px] leading-relaxed whitespace-pre-wrap break-words cursor-pointer" onclick="openUserProfileSheet('${esc(p.username)}')" style="color: var(--text-primary);">${esc(cleanText)}</p>` : ''}
+                ${mediaHtml}
 
                 <div class="pt-2.5 mt-3 border-t flex items-center justify-between gap-2" style="border-color: var(--border-subtle);">
                     <button onclick="toggleLikePost(${p.id})" class="px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition border"
@@ -792,6 +958,11 @@
                             : 'background: var(--bg-card-subtle); border-color: transparent; color: var(--text-secondary);'}">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="${p.liked_by_me ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                         <span>${p.likes_count || 0}</span>
+                    </button>
+
+                    <button onclick="openCommentsSheet(${p.id})" class="px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5" style="background: var(--bg-card-subtle); color: var(--text-secondary);">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        <span>${p.comments_count || 0}</span>
                     </button>
                 </div>
             </article>
@@ -803,13 +974,13 @@
         let list = [...serverPosts];
         if (currentFeedSub === 'popular') {
             list.sort((a, b) => (b.likes_count || 0) - (a.likes_count || 0));
-        } else if (currentFeedSub === 'mine' && currentUser) {
-            list = list.filter(p => p.username === currentUser.username);
+        } else if (currentFeedSub === 'following') {
+            list = list.filter(p => p.author_followed || (currentUser && p.username === currentUser.username));
         }
 
         listEl.innerHTML = list.length
             ? list.map(buildPostHtml).join('')
-            : `<div class="sfera-card p-6 text-center text-xs" style="color: var(--text-secondary);">Публикаций пока нет. Нажмите «Создать», чтобы написать первый пост.</div>`;
+            : `<div class="sfera-card p-6 text-center text-xs" style="color: var(--text-secondary);">Публикаций пока нет.</div>`;
     }
 
     async function toggleLikePost(postId) {
@@ -849,7 +1020,254 @@
         if (currentTab === 'profile') renderProfilePage();
     }
 
-    /* ==================== ОБЗОР И ПОИСК РЕАЛЬНЫХ АККАУНТОВ ==================== */
+    /* ==================== ПУБЛИЧНАЯ СТРАНИЦА АККАУНТА ==================== */
+    async function openUserProfileSheet(username) {
+        if (!username) return;
+        if (currentUser && username === currentUser.username) {
+            closeSheet('userProfileSheet');
+            switchTab('profile');
+            return;
+        }
+        try {
+            const res = await apiRequest(`/api/users/${encodeURIComponent(username)}`);
+            activePublicUser = res.user;
+            const u = activePublicUser;
+            const name = u.display_name || u.username;
+
+            document.getElementById('pubUserBanner').style.background = u.banner_style || BANNER_GRADIENTS[0];
+            document.getElementById('pubUserAvatar').style.background = u.avatar_color || 'var(--accent-teal)';
+            document.getElementById('pubUserAvatar').textContent = name[0].toUpperCase();
+            document.getElementById('pubUserName').textContent = name;
+            document.getElementById('pubUserHandle').textContent = `@${u.username}`;
+            document.getElementById('pubUserBio').textContent = u.bio || 'Пользователь пока не добавил описание.';
+            document.getElementById('pubUserPostsCount').textContent = u.posts_count || 0;
+            document.getElementById('pubUserFollowersCount').textContent = u.followers_count || 0;
+            document.getElementById('pubUserFollowingCount').textContent = u.following_count || 0;
+
+            updateFollowButtonUI(Boolean(u.is_following));
+
+            const userPosts = serverPosts.filter(p => p.username === u.username);
+            document.getElementById('pubUserPostsList').innerHTML = userPosts.length
+                ? userPosts.map(buildPostHtml).join('')
+                : `<div class="p-4 rounded-2xl text-center text-xs" style="background: var(--bg-card-subtle); color: var(--text-secondary);">Публикаций пока нет</div>`;
+
+            document.getElementById('userProfileSheet').classList.add('open');
+        } catch (err) {
+            showToast(err.message);
+        }
+    }
+
+    function updateFollowButtonUI(isFollowing) {
+        const btn = document.getElementById('btnFollowUser');
+        if (isFollowing) {
+            btn.textContent = 'Вы подписаны';
+            btn.style.background = 'var(--bg-card-subtle)';
+            btn.style.color = 'var(--text-primary)';
+        } else {
+            btn.textContent = 'Подписаться';
+            btn.style.background = 'var(--accent-teal)';
+            btn.style.color = '#FFFFFF';
+        }
+    }
+
+    async function toggleFollowPublicUser() {
+        if (!activePublicUser) return;
+        try {
+            const res = await apiRequest(`/api/users/${encodeURIComponent(activePublicUser.username)}/follow`, { method: 'POST' });
+            activePublicUser.is_following = res.following;
+            activePublicUser.followers_count = res.followers_count;
+            updateFollowButtonUI(res.following);
+            document.getElementById('pubUserFollowersCount').textContent = res.followers_count;
+            await fetchServerPosts();
+            showToast(res.following ? `Вы подписались на @${activePublicUser.username}` : `Вы отписались от @${activePublicUser.username}`);
+        } catch (err) {
+            showToast(err.message);
+        }
+    }
+
+    function startChatWithPublicUser() {
+        if (!activePublicUser) return;
+        const target = activePublicUser;
+        closeSheet('userProfileSheet');
+        switchTab('chats');
+        openChatRoom(target.username, target.display_name || target.username, target.avatar_color || 'var(--accent-teal)');
+    }
+
+    /* ==================== КОММЕНТАРИИ ==================== */
+    async function openCommentsSheet(postId) {
+        activeCommentsPostId = postId;
+        document.getElementById('commentsSheetList').innerHTML = `<div class="text-xs text-center py-6" style="color: var(--text-secondary);">Загрузка...</div>`;
+        document.getElementById('commentsSheet').classList.add('open');
+        await loadComments(postId);
+    }
+
+    async function loadComments(postId) {
+        const box = document.getElementById('commentsSheetList');
+        try {
+            const res = await apiRequest(`/api/posts/${postId}/comments`);
+            const list = res.comments || [];
+            if (!list.length) {
+                box.innerHTML = `<div class="text-xs text-center py-6" style="color: var(--text-secondary);">Пока нет комментариев. Напишите первый!</div>`;
+                return;
+            }
+            box.innerHTML = list.map(c => `
+                <div class="p-3.5 rounded-2xl" style="background: var(--bg-card-subtle);">
+                    <div class="flex items-center justify-between mb-1">
+                        <button onclick="closeSheet('commentsSheet'); openUserProfileSheet('${esc(c.username)}')" class="text-xs font-bold">${esc(c.display_name || c.username)} <span class="font-normal opacity-70">@${esc(c.username)}</span></button>
+                        <span class="text-[11px]" style="color: var(--text-secondary);">${formatRelativeTime(c.created_at)}</span>
+                    </div>
+                    <p class="text-xs leading-relaxed whitespace-pre-wrap">${esc(c.content)}</p>
+                </div>
+            `).join('');
+        } catch (err) {
+            box.innerHTML = `<div class="text-xs text-center py-6 text-rose-500">${esc(err.message)}</div>`;
+        }
+    }
+
+    async function postNewComment() {
+        const input = document.getElementById('newCommentInput');
+        const content = input.value.trim();
+        if (!content || !activeCommentsPostId) return;
+        const btn = document.getElementById('btnSendComment');
+        btn.disabled = true;
+        try {
+            await apiRequest(`/api/posts/${activeCommentsPostId}/comments`, {
+                method: 'POST',
+                body: JSON.stringify({ content })
+            });
+            input.value = '';
+            await loadComments(activeCommentsPostId);
+            await fetchServerPosts();
+            renderFeedCards();
+        } catch (err) {
+            showToast(err.message);
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    /* ==================== ЧАТЫ ==================== */
+    async function loadChatsList() {
+        document.getElementById('chatsListContainer').classList.remove('hidden');
+        document.getElementById('chatRoomContainer').classList.add('hidden');
+        activeChatUsername = null;
+        stopChatPolling();
+
+        const box = document.getElementById('chatThreadsList');
+        try {
+            const res = await apiRequest('/api/chats');
+            const list = res.chats || [];
+            if (!list.length) {
+                box.innerHTML = `
+                    <div class="sfera-card p-6 text-center space-y-2">
+                        <div class="w-12 h-12 mx-auto rounded-2xl flex items-center justify-center" style="background: var(--bg-card-subtle); color: var(--accent-teal);">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <div class="text-sm font-bold">Диалогов пока нет</div>
+                        <p class="text-xs" style="color: var(--text-secondary);">Нажмите на любой пост или найдите пользователя в «Обзоре», чтобы начать чат.</p>
+                    </div>
+                `;
+                return;
+            }
+            box.innerHTML = list.map(c => {
+                const name = c.display_name || c.username;
+                return `
+                    <div onclick="openChatRoom('${esc(c.username)}', '${esc(name)}', '${esc(c.avatar_color || '#16B8A6')}')" class="sfera-card p-3.5 flex items-center justify-between gap-3 cursor-pointer active:scale-[0.99] transition">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-11 h-11 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0" style="background: ${esc(c.avatar_color || '#16B8A6')};">
+                                ${esc(name[0].toUpperCase())}
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-sm truncate">${esc(name)}</span>
+                                    <span class="text-[11px] shrink-0" style="color: var(--text-secondary);">${formatRelativeTime(c.last_time)}</span>
+                                </div>
+                                <div class="text-xs truncate mt-0.5" style="color: var(--text-secondary);">${esc(c.last_message || '')}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } catch (err) {
+            box.innerHTML = `<div class="sfera-card p-5 text-center text-xs text-rose-500">${esc(err.message)}</div>`;
+        }
+    }
+
+    async function openChatRoom(username, displayName, avatarColor) {
+        activeChatUsername = username;
+        document.getElementById('chatsListContainer').classList.add('hidden');
+        document.getElementById('chatRoomContainer').classList.remove('hidden');
+
+        document.getElementById('chatRoomAvatar').style.background = avatarColor || 'var(--accent-teal)';
+        document.getElementById('chatRoomAvatar').textContent = (displayName || username)[0].toUpperCase();
+        document.getElementById('chatRoomName').textContent = displayName || username;
+        document.getElementById('chatRoomSub').textContent = `@${username}`;
+
+        await loadChatMessages(true);
+        stopChatPolling();
+        chatPollTimer = setInterval(() => loadChatMessages(false), 5000);
+    }
+
+    function stopChatPolling() {
+        if (chatPollTimer) {
+            clearInterval(chatPollTimer);
+            chatPollTimer = null;
+        }
+    }
+
+    function closeChatRoom() {
+        stopChatPolling();
+        activeChatUsername = null;
+        loadChatsList();
+    }
+
+    async function loadChatMessages(scrollBottom) {
+        if (!activeChatUsername) return;
+        const box = document.getElementById('chatRoomMessages');
+        try {
+            const res = await apiRequest(`/api/chats/${encodeURIComponent(activeChatUsername)}/messages`);
+            const msgs = res.messages || [];
+            if (!msgs.length) {
+                box.innerHTML = `<div class="text-xs text-center py-8" style="color: var(--text-secondary);">Напишите первое сообщение</div>`;
+                return;
+            }
+            box.innerHTML = msgs.map(m => {
+                const out = currentUser && m.sender_username === currentUser.username;
+                return `
+                    <div class="flex ${out ? 'justify-end' : 'justify-start'}">
+                        <div class="max-w-[80%] px-3.5 py-2.5 rounded-2xl text-xs leading-relaxed ${out ? 'text-white' : ''}"
+                            style="${out ? 'background: var(--accent-teal);' : 'background: var(--bg-card-subtle);'}">
+                            <div class="whitespace-pre-wrap break-words">${esc(m.content)}</div>
+                            <div class="text-[9px] mt-1 opacity-75 text-right">${formatRelativeTime(m.created_at)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            if (scrollBottom) box.scrollTop = box.scrollHeight;
+        } catch (_) {}
+    }
+
+    async function sendChatMessage() {
+        const input = document.getElementById('chatMsgInput');
+        const content = input.value.trim();
+        if (!content || !activeChatUsername) return;
+        const btn = document.getElementById('btnSendChatMsg');
+        btn.disabled = true;
+        try {
+            await apiRequest(`/api/chats/${encodeURIComponent(activeChatUsername)}/messages`, {
+                method: 'POST',
+                body: JSON.stringify({ content })
+            });
+            input.value = '';
+            await loadChatMessages(true);
+        } catch (err) {
+            showToast(err.message);
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    /* ==================== ОБЗОР ==================== */
     async function lookupUserByUsername() {
         const raw = (document.getElementById('exploreSearchInput').value || '').trim().replace(/^@+/, '').toLowerCase();
         const box = document.getElementById('foundUserBox');
@@ -862,17 +1280,17 @@
             const u = res.user;
             box.classList.remove('hidden');
             box.innerHTML = `
-                <div class="sfera-card p-4 flex items-center justify-between gap-3">
+                <div onclick="openUserProfileSheet('${esc(u.username)}')" class="sfera-card p-4 flex items-center justify-between gap-3 cursor-pointer">
                     <div class="flex items-center gap-3 min-w-0">
-                        <div class="w-11 h-11 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0" style="background: var(--accent-teal);">
+                        <div class="w-11 h-11 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0" style="background: ${esc(u.avatar_color || 'var(--accent-teal)')};">
                             ${esc((u.display_name || u.username)[0].toUpperCase())}
                         </div>
                         <div class="min-w-0">
                             <div class="font-bold text-sm truncate">${esc(u.display_name)}</div>
                             <div class="text-xs truncate" style="color: var(--text-secondary);">@${esc(u.username)} · Постов: ${u.posts_count || 0}</div>
-                            ${u.bio ? `<div class="text-xs mt-1" style="color: var(--text-primary);">${esc(u.bio)}</div>` : ''}
                         </div>
                     </div>
+                    <span class="text-xs font-bold px-3 py-1.5 rounded-full" style="background: var(--bg-card-subtle); color: var(--accent-teal);">Открыть</span>
                 </div>
             `;
         } catch (_) {
@@ -893,19 +1311,25 @@
             : `<div class="sfera-card p-5 text-center text-xs" style="color: var(--text-secondary);">Ничего не найдено.</div>`;
     }
 
-    /* ==================== ПРОФИЛЬ ==================== */
+    /* ==================== ПРОФИЛЬ И НАСТРОЙКА ВНЕШНЕГО ВИДА ==================== */
     function renderProfilePage() {
         if (!currentUser) return;
         const name = currentUser.display_name || currentUser.username;
+        const avatarColor = currentUser.avatar_color || 'var(--accent-violet)';
+        const bannerStyle = currentUser.banner_style || BANNER_GRADIENTS[0];
+
+        document.getElementById('profBanner').style.background = bannerStyle;
+        document.getElementById('profAvatar').style.background = avatarColor;
         document.getElementById('profAvatar').textContent = name[0].toUpperCase();
+        document.getElementById('topProfileBtn').style.background = avatarColor;
         document.getElementById('profDisplayName').textContent = name;
         document.getElementById('profUsernameRow').textContent = `@${currentUser.username}`;
         document.getElementById('profBioText').textContent = currentUser.bio || 'Описание профиля пока не заполнено.';
 
         const mine = serverPosts.filter(p => p.username === currentUser.username);
-        const saved = serverPosts.filter(p => savedIds.includes(p.id));
         document.getElementById('profPostsCount').textContent = mine.length;
-        document.getElementById('profSavedCount').textContent = saved.length;
+        document.getElementById('profFollowersCount').textContent = currentUser.followers_count || 0;
+        document.getElementById('profFollowingCount').textContent = currentUser.following_count || 0;
 
         setProfileSubTab(currentProfSub);
     }
@@ -931,7 +1355,20 @@
         if (!currentUser) return;
         document.getElementById('editNameInput').value = currentUser.display_name || '';
         document.getElementById('editBioInput').value = currentUser.bio || '';
+        editSelectedAvatarColor = currentUser.avatar_color || AVATAR_COLORS[0];
+        editSelectedBanner = currentUser.banner_style || BANNER_GRADIENTS[0];
+        renderAppearanceSwatches();
         document.getElementById('editProfileSheet').classList.add('open');
+    }
+
+    function renderAppearanceSwatches() {
+        document.getElementById('avatarColorSwatches').innerHTML = AVATAR_COLORS.map(c => `
+            <button type="button" onclick="editSelectedAvatarColor='${c}'; renderAppearanceSwatches();" class="swatch-btn ${editSelectedAvatarColor === c ? 'active' : ''}" style="background: ${c};"></button>
+        `).join('');
+
+        document.getElementById('bannerSwatches').innerHTML = BANNER_GRADIENTS.map(g => `
+            <button type="button" onclick="editSelectedBanner='${g}'; renderAppearanceSwatches();" class="h-10 rounded-xl border-2 transition ${editSelectedBanner === g ? 'scale-105' : ''}" style="background: ${g}; border-color: ${editSelectedBanner === g ? 'var(--text-primary)' : 'transparent'};"></button>
+        `).join('');
     }
 
     async function saveProfileChanges() {
@@ -946,7 +1383,12 @@
         try {
             const res = await apiRequest('/api/me', {
                 method: 'PATCH',
-                body: JSON.stringify({ display_name, bio })
+                body: JSON.stringify({
+                    display_name,
+                    bio,
+                    avatar_color: editSelectedAvatarColor,
+                    banner_style: editSelectedBanner
+                })
             });
             currentUser = res.user;
             closeSheet('editProfileSheet');
@@ -960,10 +1402,13 @@
         }
     }
 
-    /* ==================== СОЗДАНИЕ ПОСТА ==================== */
+    /* ==================== СОЗДАНИЕ ПОСТА + МЕДИА ==================== */
     function openCreateSheet(mode = 'post') {
-        selectCreateMode(mode);
+        selectCreateMode(mode === 'sphere' ? 'sphere' : 'post');
         document.getElementById('createSheet').classList.add('open');
+        if (mode === 'media') {
+            setTimeout(() => document.getElementById('mediaFileInput').click(), 220);
+        }
     }
 
     function openNotifSheet() {
@@ -983,21 +1428,56 @@
         });
     }
 
+    function handleMediaFileSelect(input) {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        selectedMediaFile = file;
+        const url = URL.createObjectURL(file);
+        const box = document.getElementById('mediaPreviewContent');
+        if (file.type.startsWith('video/')) {
+            box.innerHTML = `<video src="${url}" controls class="w-full max-h-[220px] bg-black object-contain"></video>`;
+        } else {
+            box.innerHTML = `<img src="${url}" alt="Предпросмотр" class="w-full max-h-[220px] object-cover">`;
+        }
+        document.getElementById('mediaPreviewWrap').classList.remove('hidden');
+    }
+
+    function clearSelectedMedia() {
+        selectedMediaFile = null;
+        document.getElementById('mediaFileInput').value = '';
+        document.getElementById('mediaPreviewWrap').classList.add('hidden');
+        document.getElementById('mediaPreviewContent').innerHTML = '';
+    }
+
     async function submitNewPost() {
         const rawText = document.getElementById('createTextarea').value.trim();
-        if (!rawText) {
-            showToast('Напишите текст публикации');
+        if (!rawText && !selectedMediaFile) {
+            showToast('Добавьте текст, фото или видео');
             return;
         }
         const content = createMode === 'sphere' ? `[Сфера 24ч] ${rawText}` : rawText;
         const btn = document.getElementById('btnPublishSubmit');
         btn.disabled = true;
+
         try {
+            let media_url = null;
+            let media_type = null;
+
+            if (selectedMediaFile) {
+                const fd = new FormData();
+                fd.append('file', selectedMediaFile);
+                const up = await apiRequest('/api/upload', { method: 'POST', body: fd });
+                media_url = up.url;
+                media_type = up.media_type;
+            }
+
             await apiRequest('/api/posts', {
                 method: 'POST',
-                body: JSON.stringify({ content })
+                body: JSON.stringify({ content, media_url, media_type })
             });
+
             document.getElementById('createTextarea').value = '';
+            clearSelectedMedia();
             closeSheet('createSheet');
             await fetchServerPosts();
             switchTab('home');
@@ -1101,6 +1581,7 @@
     }
 
     async function logoutAccount() {
+        stopChatPolling();
         try { await apiRequest('/api/logout', { method: 'POST' }); } catch (_) {}
         authToken = '';
         currentUser = null;
